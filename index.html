@@ -251,235 +251,6 @@ var _hmt = _hmt || [];
 
 
   
-    <article id="post-serviceloader" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/03/12/serviceloader/">dubbo(1)-&gt;Serviceloader</a>
-    </h1>
-  
-
-        
-        <a href="/2017/03/12/serviceloader/" class="archive-article-date">
-  	<time datetime="2017-03-12T12:39:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>中间件技术一直都是自己最感兴趣，有分布式服务框架，分布式消息队列，分布式缓存，分布式数据服务等等，参与开发其中任一一个项目都会学到很多知识，很幸运在开始参加工作后的第一个项目就是分布式服务框架，后来接触到了dubbo，被dubbo的设计所吸引，虽然有时间偶尔也会看看dubbo的代码，但没有系统的好好总结沉淀下来，看得如同过往云烟，时间也就那样的流逝了。最近也不断地在反思，工作快2两年了，像是一直在原地踏步，很多时候都是急于求成，自知其然，却不知其所以然，看着距离自己的第一个目标还那么的远，所以决定好好的静下心来先从学dubbo开始。</p>
-<p>dubbo是服务框架，服务框架是用于实现服务的复用的框架，是软件框架。那框架是什么？让我联想到了建筑框架，建筑框架确定了整个建筑的结构，建筑框架允许你在不改变结构的基础上，自由改变其内容。例如，你可以用墙体随意分隔房间。所以框架就好比建筑框架，可以这样说，框架的本质就是“扩展”。在一个框架中，实现丰富的功能固然重要，然而更重要的是：建立良好的扩展机制。</p>
-<p>dubbo基于JDK中的SPI机制扩展了一套自己的扩展机制，让使用者方便地自己扩展和实现自己的插件。<br>下面介绍JDK提供的SPI机制(java.util.ServiceLoader)：</p>
-<p>SPI英文为Service Provider Interface单从字面可以理解为Service提供者接口，正如从SPI的名字去理解SPI就是Service提供者接口；提供给服务提供厂商与扩展框架功能的开发者使用的接口。</p>
-<p>SPI 机制的约定：</p>
-<p>1) 在META-INF/services/目录中创建以接口全限定名命名的文件该文件内容为Api具体实现类的全限定名</p>
-<p>2) 使用ServiceLoader类动态加载META-INF中的实现类</p>
-<p>3) 如SPI的实现类为Jar则需要放在主程序classPath中</p>
-<p>4) Api具体实现类必须有一个不带参数的构造方法</p>
-<p>下面是基于JDK的SPI的showcase</p>
-<p>//工具类(对接用户和SPI)：</p>
-<pre><code>package com.mcg.java.tool.serviceloader.utils;
-
-import java.util.ServiceLoader;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
- //工具类
-public class ServicerLoaderUtils
- {   
-//保存spi加载的服务
-private static ConcurrentMap&lt;String,Class&lt;?&gt;&gt; services=new ConcurrentHashMap&lt;String,Class&lt;?&gt;&gt;();
-
-//用户调用方法,获取相应的服务
-public static Class&lt;?&gt; getService(String name,Class&lt;?&gt; clazz) throws Exception
-{
-    Class&lt;?&gt; service= services.get(name);
-    if(null==service)
-    {   
-        load(clazz);
-        service= services.get(name);
-
-    }
-    return service;
-}
-
-//加载服务
-public static &lt;T&gt; void load(Class&lt;T&gt; service) throws Exception
-{
-
-    for (T t:ServiceLoader.load(service))
-    {
-        String name=t.getClass().getAnnotation(ServiceAnnotation.class).name();
-        services.putIfAbsent(name, t.getClass());
-    }
-
-}
-</code></pre><p>}</p>
-<p>//注解工具类：</p>
-<pre><code>package com.mcg.java.tool.serviceloader.utils;
-
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Documented
-@Target(ElementType.TYPE)  
-@Retention(RetentionPolicy.RUNTIME) 
-public @interface ServiceAnnotation 
-{
-  String name() default &quot;default&quot;;
-}
-</code></pre><p>//服务接口：</p>
-<pre><code>package com.mcg.java.tool.serviceloader;
-
-public interface Handler 
-{
-  void handler();
-}
-</code></pre><p>//服务实现：</p>
-<pre><code>package com.mcg.java.tool.serviceloader.HandlerImpl;
-
-import com.mcg.java.tool.serviceloader.Handler;
-import com.mcg.java.tool.serviceloader.utils.ServiceAnnotation;
-
-@ServiceAnnotation
-public class DefaultHandlerImpl implements Handler 
-{
-
-public void handler()
-{
-    System.out.println(&quot;this is defaultHandler&quot;);
-}
-
-}
-
-package com.mcg.java.tool.serviceloader.HandlerImpl;
-
-import com.mcg.java.tool.serviceloader.Handler;
-import com.mcg.java.tool.serviceloader.utils.ServiceAnnotation;
-
-@ServiceAnnotation(name=&quot;handlerImpl1&quot;)
-public class HandlerImpl1 implements Handler 
-{
-
-public void handler() 
-{
-    System.out.println(&quot;this is handlerImpl1&quot;);
-
-}
-
-}
-
-package com.mcg.java.tool.serviceloader.HandlerImpl;
-
-import com.mcg.java.tool.serviceloader.Handler;
-import com.mcg.java.tool.serviceloader.utils.ServiceAnnotation;
-
-@ServiceAnnotation(name=&quot;handlerImpl2&quot;)
-public class HandlerImpl2 implements Handler 
-{
-
-public void handler() 
-{
-    System.out.println(&quot;this is handlerImpl2&quot;);
-
-}
-
-}
-</code></pre><p>//SPI配置文件（META-INF/services/com.mcg.java.tool.serviceloader.Handler）</p>
-<pre><code>com.mcg.java.tool.serviceloader.HandlerImpl.DefaultHandlerImpl
-com.mcg.java.tool.serviceloader.HandlerImpl.HandlerImpl1
-com.mcg.java.tool.serviceloader.HandlerImpl.HandlerImpl2
-</code></pre><p>//测试:</p>
-<pre><code>package com.mcg.java.tool.serviceloader;
-
-import com.mcg.java.tool.serviceloader.utils.ServicerLoaderUtils;
-
-public class ServiceloaderTest 
-{
-@SuppressWarnings(&quot;unchecked&quot;)
-public static void main(String[] args) throws Exception 
-{
-    Class&lt;Handler&gt; handler=(Class&lt;Handler&gt;) ServicerLoaderUtils.getService(&quot;default&quot;,Handler.class);
-    handler.newInstance().handler();
-    Class&lt;Handler&gt; handler1=(Class&lt;Handler&gt;) ServicerLoaderUtils.getService(&quot;handlerImpl1&quot;,Handler.class);
-    handler1.newInstance().handler();
-    Class&lt;Handler&gt; handler2=(Class&lt;Handler&gt;) ServicerLoaderUtils.getService(&quot;handlerImpl2&quot;,Handler.class);
-    handler2.newInstance().handler();
-}
-
-}
-</code></pre><p>//结果：</p>
-<pre><code>defaultHandler
-this is handlerImpl1
-this is handlerImpl2
-</code></pre><p>在上面的showcase中，ServicerLoaderUtils和ServiceAnnotation是两个工具类，只要基于这两个工具类就可以实现基于名字来获取不同的服务，然后基于策略模式执行相应的服务。ServicerLoaderUtils的load方法中对接ServiceLoader来实现服务的加载。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">SPI</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/dubbo/" class="article-tag-list-link color1">dubbo</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Serviceloader/" class="article-tag-list-link color4">Serviceloader</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/03/12/serviceloader/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
     <article id="post-rpc" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -714,6 +485,293 @@ public static void main(String args [])
 
 
   
+    <article id="post-serviceloader" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/03/12/serviceloader/">dubbo(1)-&gt;Serviceloader</a>
+    </h1>
+  
+
+        
+        <a href="/2017/03/12/serviceloader/" class="archive-article-date">
+  	<time datetime="2017-03-12T12:39:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>中间件技术一直都是自己最感兴趣，有分布式服务框架，分布式消息队列，分布式缓存，分布式数据服务等等，参与开发其中任一一个项目都会学到很多知识，很幸运在开始参加工作后的第一个项目就是分布式服务框架，后来接触到了dubbo，被dubbo的设计所吸引，虽然有时间偶尔也会看看dubbo的代码，但没有系统的好好总结沉淀下来，看得如同过往云烟，时间也就那样的流逝了。最近也不断地在反思，工作快2两年了，像是一直在原地踏步，很多时候都是急于求成，自知其然，却不知其所以然，看着距离自己的第一个目标还那么的远，所以决定好好的静下心来先从学dubbo开始。</p>
+<p>dubbo是服务框架，服务框架是用于实现服务的复用的框架，是软件框架。那框架是什么？让我联想到了建筑框架，建筑框架确定了整个建筑的结构，建筑框架允许你在不改变结构的基础上，自由改变其内容。例如，你可以用墙体随意分隔房间。所以框架就好比建筑框架，可以这样说，框架的本质就是“扩展”。在一个框架中，实现丰富的功能固然重要，然而更重要的是：建立良好的扩展机制。</p>
+<p>dubbo基于JDK中的SPI机制扩展了一套自己的扩展机制，让使用者方便地自己扩展和实现自己的插件。<br>下面介绍JDK提供的SPI机制(java.util.ServiceLoader)：</p>
+<p>SPI英文为Service Provider Interface单从字面可以理解为Service提供者接口，正如从SPI的名字去理解SPI就是Service提供者接口；提供给服务提供厂商与扩展框架功能的开发者使用的接口。</p>
+<p>SPI 机制的约定：</p>
+<p>1) 在META-INF/services/目录中创建以接口全限定名命名的文件该文件内容为Api具体实现类的全限定名</p>
+<p>2) 使用ServiceLoader类动态加载META-INF中的实现类</p>
+<p>3) 如SPI的实现类为Jar则需要放在主程序classPath中</p>
+<p>4) Api具体实现类必须有一个不带参数的构造方法</p>
+<p>下面是基于JDK的SPI的showcase</p>
+<p>//工具类(对接用户和SPI)：</p>
+<pre><code>package com.mcg.java.tool.serviceloader.utils;
+
+import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+//工具类
+public class ServicerLoaderUtils
+{   
+//保存spi加载的服务
+private static ConcurrentMap&lt;String,Object&gt; services=new ConcurrentHashMap&lt;String,Object&gt;();
+
+//用户调用方法,获取相应的服务
+public static Object getService(String name,Class&lt;?&gt; clazz) throws Exception
+{
+    Object service= services.get(name);
+    if(null==service)
+    {   
+        load(clazz);
+        service= services.get(name);
+
+    }
+    return service;
+}
+
+//加载服务
+public static &lt;T&gt; void load(Class&lt;T&gt; service) throws Exception
+{
+
+    for (T t:ServiceLoader.load(service))
+    {
+        String name=t.getClass().getAnnotation(ServiceAnnotation.class).name();
+        services.putIfAbsent(name, t);
+    }
+
+}
+
+}
+</code></pre><p>//注解工具类：</p>
+<pre><code>package com.mcg.java.tool.serviceloader.utils;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Documented
+@Target(ElementType.TYPE)  
+@Retention(RetentionPolicy.RUNTIME) 
+public @interface ServiceAnnotation 
+{
+  String name() default &quot;default&quot;;
+}
+</code></pre><p>//服务接口：</p>
+<pre><code>package com.mcg.java.tool.serviceloader;
+
+public interface Handler 
+{
+  void handler();
+}
+</code></pre><p>//服务实现：</p>
+<pre><code>package com.mcg.java.tool.serviceloader.HandlerImpl;
+
+import com.mcg.java.tool.serviceloader.Handler;
+import com.mcg.java.tool.serviceloader.utils.ServiceAnnotation;
+
+@ServiceAnnotation
+public class DefaultHandlerImpl implements Handler 
+{
+
+public void handler()
+{
+    System.out.println(&quot;this is defaultHandler&quot;);
+}
+
+}
+
+package com.mcg.java.tool.serviceloader.HandlerImpl;
+
+import com.mcg.java.tool.serviceloader.Handler;
+import com.mcg.java.tool.serviceloader.utils.ServiceAnnotation;
+
+@ServiceAnnotation(name=&quot;handlerImpl1&quot;)
+public class HandlerImpl1 implements Handler 
+{
+
+public void handler() 
+{
+    System.out.println(&quot;this is handlerImpl1&quot;);
+
+}
+
+}
+
+package com.mcg.java.tool.serviceloader.HandlerImpl;
+
+import com.mcg.java.tool.serviceloader.Handler;
+import com.mcg.java.tool.serviceloader.utils.ServiceAnnotation;
+
+@ServiceAnnotation(name=&quot;handlerImpl2&quot;)
+public class HandlerImpl2 implements Handler 
+{
+
+public void handler() 
+{
+    System.out.println(&quot;this is handlerImpl2&quot;);
+
+}
+
+}
+</code></pre><p>//SPI配置文件（META-INF/services/com.mcg.java.tool.serviceloader.Handler）</p>
+<pre><code>com.mcg.java.tool.serviceloader.HandlerImpl.DefaultHandlerImpl
+com.mcg.java.tool.serviceloader.HandlerImpl.HandlerImpl1
+com.mcg.java.tool.serviceloader.HandlerImpl.HandlerImpl2
+</code></pre><p>//测试:</p>
+<pre><code>package com.mcg.java.tool.serviceloader;
+
+import com.mcg.java.tool.serviceloader.utils.ServicerLoaderUtils;
+
+public class ServiceloaderTest 
+{
+@SuppressWarnings(&quot;unchecked&quot;)
+public static void main(String[] args) throws Exception 
+{
+    Handler handler=(Handler) ServicerLoaderUtils.getService(&quot;default&quot;,Handler.class);
+    handler.handler();
+    Handler handler1=(Handler) ServicerLoaderUtils.getService(&quot;handlerImpl1&quot;,Handler.class);
+    handler1.handler();
+    Handler handler2=(Handler) ServicerLoaderUtils.getService(&quot;handlerImpl2&quot;,Handler.class);
+    handler2.handler();
+}
+
+}
+</code></pre><p>//结果：</p>
+<pre><code>this is defaultHandler
+this is handlerImpl1
+this is handlerImpl2
+</code></pre><p>在上面的showcase中，ServicerLoaderUtils和ServiceAnnotation是两个工具类，只要基于这两个工具类就可以实现基于名字来获取不同的服务，然后基于策略模式执行相应的服务。ServicerLoaderUtils的load方法中对接ServiceLoader来实现服务的加载。</p>
+<p>ServiceLoader的源码分析</p>
+<p>上面showcase中先根据ServiceLoader的load静态方法根据目标接口加载出一个ServiceLoader实例，然后可以遍历这个实例（实现了Iterable接口），获取到接口的所有实现类。</p>
+<p>ServiceLoader有几个重要属性：</p>
+<pre><code>//查找实现类的前级目录
+private static final String PREFIX = &quot;META-INF/services/&quot;;
+
+//要加载的接口
+private Class&lt;S&gt; service;
+
+// 
+private ClassLoader loader;
+
+// 缓存已经加载过的实现类，其中key为实现类的全名
+private LinkedHashMap&lt;String,S&gt; providers = new LinkedHashMap&lt;&gt;();
+
+//延迟加载器
+private LazyIterator lookupIterator;
+</code></pre><p>在上面调用load方法中，会创建ServiceLoader实例，会初始化的重要属性，此时还没有进行任何接口实现类的加载操作，属于延迟加载类型的。</p>
+<p>在执行for循环的时候，由于ServiceLoader实现了Iterable接口，即实现了该接口的iterator()方法，实现内容如下：</p>
+<pre><code>    public Iterator&lt;S&gt; iterator() {
+    return new Iterator&lt;S&gt;() {
+
+        Iterator&lt;Map.Entry&lt;String,S&gt;&gt; knownProviders
+            = providers.entrySet().iterator();
+
+        public boolean hasNext() {
+            if (knownProviders.hasNext())
+                return true;
+            return lookupIterator.hasNext();
+        }
+
+        public S next() {
+            if (knownProviders.hasNext())
+                return knownProviders.next().getValue();
+            return lookupIterator.next();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+    };
+}
+</code></pre><p>其实for循环就是调用上述hasNext()和next()方法的过程。</p>
+<p>第一次循环遍历会使用lookupIterator去查找，之后就缓存到providers中。LazyIterator会去加载类路径下/META-INF/services/接口全称 文件的url地址，使用如下代码来加载：</p>
+<pre><code>String fullName = PREFIX + service.getName();
+if (loader == null)
+configs = ClassLoader.getSystemResources(fullName);
+else
+configs = loader.getResources(fullName);
+</code></pre><p>文件加载并解析完成之后，得到一系列的接口实现类的完整类名，调用next()方法时才回去真正执行接口实现类的加载操作，并根据无参构造器创建出一个实例，存到providers中；</p>
+<p>之后再次遍历ServiceLoader，就直接遍历providers中的数据</p>
+<pre><code>S p = service.cast(c.newInstance());
+providers.put(cn, p);
+</code></pre><p>ServiceLoader缺点分析</p>
+<p>虽然ServiceLoader也算是使用的延迟加载，但是基本只能通过遍历全部获取，也就是接口的实现类全部加载并实例化一遍。如果你并不想用某些实现类，它也被加载并实例化了，这就造成了浪费。</p>
+<p>获取某个实现类的方式不够灵活，只能通过Iterator形式获取，不能根据某个参数来获取对应的实现类</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">SPI</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/dubbo/" class="article-tag-list-link color1">dubbo</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Serviceloader/" class="article-tag-list-link color4">Serviceloader</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/03/12/serviceloader/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
   
 
 
@@ -726,7 +784,9 @@ public static void main(String args [])
     	<div class="footer-left">
     		&copy; 2017 mcg
     	</div>
-      	
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
     </div>
   </div>
 </footer>
@@ -797,15 +857,15 @@ public static void main(String args [])
           <ul class="article-tag-list" q-show="showTags">
              
               <li class="article-tag-list-item">
-                <a href="javascript:void(0)" class="js-tag color4">SPI</a>
-              </li>
-             
-              <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color3">杂谈</a>
               </li>
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color4">RPC</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color4">SPI</a>
               </li>
             
             <div class="clearfix"></div>
