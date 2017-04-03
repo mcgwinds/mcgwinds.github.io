@@ -6,17 +6,24 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://mcgwinds.github.io">
-  <title>Tag: RPC | 种一颗树最好的是十年以前，其次是现在</title>
+  <title>dubbo(2)-&gt;ExtensionLoader | 种一颗树最好的是十年以前，其次是现在</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录生活点滴">
-<meta property="og:type" content="website">
-<meta property="og:title" content="种一颗树最好的是十年以前，其次是现在">
-<meta property="og:url" content="https://mcgwinds.github.io/tags/RPC/index.html">
+  <meta name="description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于其基础上扩展了一套自己的扩展机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来晚上看了别人的分析，结合自己的思考，渐渐的ExtensionLoader的设计思想在脑中明朗起来，真佩服阿里人的设计思想，另一个层面也说明了自己功力还是很浅的，继续努力。
+源码分析
+/">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dubbo(2)->ExtensionLoader">
+<meta property="og:url" content="https://mcgwinds.github.io/2017/03/15/ExtensionLoader/index.html">
 <meta property="og:site_name" content="种一颗树最好的是十年以前，其次是现在">
-<meta property="og:description" content="记录生活点滴">
+<meta property="og:description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于其基础上扩展了一套自己的扩展机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来晚上看了别人的分析，结合自己的思考，渐渐的ExtensionLoader的设计思想在脑中明朗起来，真佩服阿里人的设计思想，另一个层面也说明了自己功力还是很浅的，继续努力。
+源码分析
+/">
+<meta property="og:updated_time" content="2017-04-03T09:09:04.018Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="种一颗树最好的是十年以前，其次是现在">
-<meta name="twitter:description" content="记录生活点滴">
+<meta name="twitter:title" content="dubbo(2)->ExtensionLoader">
+<meta name="twitter:description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于其基础上扩展了一套自己的扩展机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来晚上看了别人的分析，结合自己的思考，渐渐的ExtensionLoader的设计思想在脑中明朗起来，真佩服阿里人的设计思想，另一个层面也说明了自己功力还是很浅的，继续努力。
+源码分析
+/">
   
     <link rel="alternative" href="/index.html" title="种一颗树最好的是十年以前，其次是现在" type="application/atom+xml">
   
@@ -166,48 +173,245 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-ExtensionLoader" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/03/12/rpc/" class="archive-article-date">
-  	<time datetime="2017-03-12T12:39:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-12</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/03/12/rpc/">RPC框架</a>
+    <h1 class="article-title" itemprop="name">
+      dubbo(2)-&gt;ExtensionLoader
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2017/03/15/ExtensionLoader/" class="archive-article-date">
+  	<time datetime="2017-03-15T13:12:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-15</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>前一篇文章总结了一下JDK的SPI机制，dubbo基于其基础上扩展了一套自己的扩展机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来晚上看了别人的分析，结合自己的思考，渐渐的ExtensionLoader的设计思想在脑中明朗起来，真佩服阿里人的设计思想，另一个层面也说明了自己功力还是很浅的，继续努力。</p>
+<p>源码分析</p>
+<p>//工具类(对接用户和SPI)：</p>
+<pre><code>package com.mcg.java.tool.serviceloader.utils;
+
+import java.util.ServiceLoader;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
+
+//工具类
+public class ServicerLoaderUtils
+{   
+//保存spi加载的服务
+private static ConcurrentMap&lt;String,Object&gt; services=new ConcurrentHashMap&lt;String,Object&gt;();
+
+//用户调用方法,获取相应的服务
+public static Object getService(String name,Class&lt;?&gt; clazz) throws Exception
+{
+    Object service= services.get(name);
+    if(null==service)
+    {   
+        load(clazz);
+        service= services.get(name);
+
+    }
+    return service;
+}
+
+//加载服务
+public static &lt;T&gt; void load(Class&lt;T&gt; service) throws Exception
+{
+
+    for (T t:ServiceLoader.load(service))
+    {
+        String name=t.getClass().getAnnotation(ServiceAnnotation.class).name();
+        services.putIfAbsent(name, t);
+    }
+
+}
+
+}
+</code></pre><p>//注解工具类：</p>
+<pre><code>package com.mcg.java.tool.serviceloader.utils;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+@Documented
+@Target(ElementType.TYPE)  
+@Retention(RetentionPolicy.RUNTIME) 
+public @interface ServiceAnnotation 
+{
+  String name() default &quot;default&quot;;
+}
+</code></pre><p>//服务接口：</p>
+<pre><code>package com.mcg.java.tool.serviceloader;
+
+public interface Handler 
+{
+  void handler();
+}
+</code></pre><p>//服务实现：</p>
+<pre><code>package com.mcg.java.tool.serviceloader.HandlerImpl;
+
+import com.mcg.java.tool.serviceloader.Handler;
+import com.mcg.java.tool.serviceloader.utils.ServiceAnnotation;
+
+@ServiceAnnotation
+public class DefaultHandlerImpl implements Handler 
+{
+
+public void handler()
+{
+    System.out.println(&quot;this is defaultHandler&quot;);
+}
+
+}
+
+package com.mcg.java.tool.serviceloader.HandlerImpl;
+
+import com.mcg.java.tool.serviceloader.Handler;
+import com.mcg.java.tool.serviceloader.utils.ServiceAnnotation;
+
+@ServiceAnnotation(name=&quot;handlerImpl1&quot;)
+public class HandlerImpl1 implements Handler 
+{
+
+public void handler() 
+{
+    System.out.println(&quot;this is handlerImpl1&quot;);
+
+}
+
+}
+
+package com.mcg.java.tool.serviceloader.HandlerImpl;
+
+import com.mcg.java.tool.serviceloader.Handler;
+import com.mcg.java.tool.serviceloader.utils.ServiceAnnotation;
+
+@ServiceAnnotation(name=&quot;handlerImpl2&quot;)
+public class HandlerImpl2 implements Handler 
+{
+
+public void handler() 
+{
+    System.out.println(&quot;this is handlerImpl2&quot;);
+
+}
+
+}
+</code></pre><p>//SPI配置文件（META-INF/services/com.mcg.java.tool.serviceloader.Handler）</p>
+<pre><code>com.mcg.java.tool.serviceloader.HandlerImpl.DefaultHandlerImpl
+com.mcg.java.tool.serviceloader.HandlerImpl.HandlerImpl1
+com.mcg.java.tool.serviceloader.HandlerImpl.HandlerImpl2
+</code></pre><p>//测试:</p>
+<pre><code>package com.mcg.java.tool.serviceloader;
+
+import com.mcg.java.tool.serviceloader.utils.ServicerLoaderUtils;
+
+public class ServiceloaderTest 
+{
+@SuppressWarnings(&quot;unchecked&quot;)
+public static void main(String[] args) throws Exception 
+{
+    Handler handler=(Handler) ServicerLoaderUtils.getService(&quot;default&quot;,Handler.class);
+    handler.handler();
+    Handler handler1=(Handler) ServicerLoaderUtils.getService(&quot;handlerImpl1&quot;,Handler.class);
+    handler1.handler();
+    Handler handler2=(Handler) ServicerLoaderUtils.getService(&quot;handlerImpl2&quot;,Handler.class);
+    handler2.handler();
+}
+
+}
+</code></pre><p>//结果：</p>
+<pre><code>this is defaultHandler
+this is handlerImpl1
+this is handlerImpl2
+</code></pre><p>在上面的showcase中，ServicerLoaderUtils和ServiceAnnotation是两个工具类，只要基于这两个工具类就可以实现基于名字来获取不同的服务，然后基于策略模式执行相应的服务。ServicerLoaderUtils的load方法中对接ServiceLoader来实现服务的加载。</p>
+<p>ServiceLoader的源码分析</p>
+<p>上面showcase中先根据ServiceLoader的load静态方法根据目标接口加载出一个ServiceLoader实例，然后可以遍历这个实例（实现了Iterable接口），获取到接口的所有实现类。</p>
+<p>ServiceLoader有几个重要属性：</p>
+<pre><code>//查找实现类的前级目录
+private static final String PREFIX = &quot;META-INF/services/&quot;;
+
+//要加载的接口
+private Class&lt;S&gt; service;
+
+// 
+private ClassLoader loader;
+
+// 缓存已经加载过的实现类，其中key为实现类的全名
+private LinkedHashMap&lt;String,S&gt; providers = new LinkedHashMap&lt;&gt;();
+
+//延迟加载器
+private LazyIterator lookupIterator;
+</code></pre><p>在上面调用load方法中，会创建ServiceLoader实例，会初始化的重要属性，此时还没有进行任何接口实现类的加载操作，属于延迟加载类型的。</p>
+<p>在执行for循环的时候，由于ServiceLoader实现了Iterable接口，即实现了该接口的iterator()方法，实现内容如下：</p>
+<pre><code>    public Iterator&lt;S&gt; iterator() {
+    return new Iterator&lt;S&gt;() {
+
+        Iterator&lt;Map.Entry&lt;String,S&gt;&gt; knownProviders
+            = providers.entrySet().iterator();
+
+        public boolean hasNext() {
+            if (knownProviders.hasNext())
+                return true;
+            return lookupIterator.hasNext();
+        }
+
+        public S next() {
+            if (knownProviders.hasNext())
+                return knownProviders.next().getValue();
+            return lookupIterator.next();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+
+    };
+}
+</code></pre><p>其实for循环就是调用上述hasNext()和next()方法的过程。</p>
+<p>第一次循环遍历会使用lookupIterator去查找，之后就缓存到providers中。LazyIterator会去加载类路径下/META-INF/services/接口全称 文件的url地址，使用如下代码来加载：</p>
+<pre><code>String fullName = PREFIX + service.getName();
+if (loader == null)
+configs = ClassLoader.getSystemResources(fullName);
+else
+configs = loader.getResources(fullName);
+</code></pre><p>文件加载并解析完成之后，得到一系列的接口实现类的完整类名，调用next()方法时才回去真正执行接口实现类的加载操作，并根据无参构造器创建出一个实例，存到providers中；</p>
+<p>之后再次遍历ServiceLoader，就直接遍历providers中的数据</p>
+<pre><code>S p = service.cast(c.newInstance());
+providers.put(cn, p);
+</code></pre><p>ServiceLoader缺点分析</p>
+<p>虽然ServiceLoader也算是使用的延迟加载，但是基本只能通过遍历全部获取，也就是接口的实现类全部加载并实例化一遍。如果你并不想用某些实现类，它也被加载并实例化了，这就造成了浪费。</p>
+<p>获取某个实现类的方式不够灵活，只能通过Iterator形式获取，不能根据某个参数来获取对应的实现类</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color4">RPC</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color1">dubbo</a>
         		</li>
       		
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -217,28 +421,124 @@ var _hmt = _hmt || [];
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="/categories/分布式/" class="article-tag-list-link color4">分布式</a>
+        			<a href="/categories/dubbo/" class="article-tag-list-link color1">dubbo</a>
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="/categories/分布式服务框架/" class="article-tag-list-link color3">分布式服务框架</a>
+        			<a href="/categories/ExtensionLoader/" class="article-tag-list-link color1">ExtensionLoader</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://mcgwinds.github.io/2017/03/15/ExtensionLoader/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
+  
+    <a href="/2017/03/18/Programmer/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          程序员
+        
+      </div>
+    </a>
   
   
-    </div></section>
+    <a href="/2017/03/12/rpc/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">RPC框架</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="ExtensionLoader" data-title="dubbo(2)-&gt;ExtensionLoader" data-url="https://mcgwinds.github.io/2017/03/15/ExtensionLoader/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"litten-hexo"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
   
 
-    
+
 
 
           </div>
@@ -261,9 +561,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		root: "/",
