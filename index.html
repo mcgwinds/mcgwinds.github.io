@@ -865,6 +865,192 @@ providers.put(cn, p);
 
 
   
+    <article id="post-AbstractStringBuilder" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/01/29/AbstractStringBuilder/">AbstractStringBuilder</a>
+    </h1>
+  
+
+        
+        <a href="/2017/01/29/AbstractStringBuilder/" class="archive-article-date">
+  	<time datetime="2017-01-29T02:13:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-29</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>String是不变字符串，而要实现可以可变的字符串，可以通过继承AbstractStringBuilder类，AbstractStringBuilder是抽象类，实现了Appendable，CharSequence接口，具有append能力，同时也具备了返回字符串长度，返回特定位置字符，返回子串等能力，是StringBuilder和StringBuffer的父类。</p>
+<p>类定义:</p>
+<pre><code>abstract class AbstractStringBuilder implements Appendable, CharSequence
+</code></pre><p>从类定义看，AbstractStringBuilder是包私有。</p>
+<p>属性:</p>
+<p>私有属性:</p>
+<pre><code>char value[];（value数组保存字符串，不是final类型）
+
+int count; 字符串的长度
+</code></pre><p>方法:</p>
+<p>AbstractStringBuilder提供了2个构造函数：</p>
+<pre><code>//默认构造函数。
+AbstractStringBuilder() {
+}
+
+//以capacity参数创建保存字符串的数组。
+AbstractStringBuilder(int capacity) {
+    value = new char[capacity];
+}
+</code></pre><p>append()函数系列</p>
+<pre><code>public AbstractStringBuilder append(Object obj)
+public AbstractStringBuilder append(String str)
+public AbstractStringBuilder append(StringBuffer sb)
+public AbstractStringBuilder append(CharSequence s)
+public AbstractStringBuilder append(CharSequence s, int start, int end)
+public AbstractStringBuilder append(char[] str)
+public AbstractStringBuilder append(char str[], int offset, int len)
+public AbstractStringBuilder append(boolean b)
+public AbstractStringBuilder append(char c)
+public AbstractStringBuilder append(int i)
+public AbstractStringBuilder append(long l)
+public AbstractStringBuilder append(float f)
+public AbstractStringBuilder append(double d)
+</code></pre><p>insert()函数系列</p>
+<pre><code>public AbstractStringBuilder insert(int index, char[] str, int offset,int len)
+public AbstractStringBuilder insert(int offset, Object obj)
+public AbstractStringBuilder insert(int offset, String str)
+public AbstractStringBuilder insert(int offset, char[] str)
+public AbstractStringBuilder insert(int dstOffset, CharSequence s
+public AbstractStringBuilder insert(int dstOffset, CharSequence s,int start, int end)
+public AbstractStringBuilder insert(int offset, boolean b)
+public AbstractStringBuilder insert(int offset, char c)
+public AbstractStringBuilder insert(int offset, int i)
+public AbstractStringBuilder insert(int offset, long l)
+public AbstractStringBuilder insert(int offset, float f)
+public AbstractStringBuilder insert(int offset, double d)
+</code></pre><p>在append和insert等函数的时候，需要判断进行数组扩容，expandCapacity函数完成数组的扩容，具体处理逻辑如下：</p>
+<pre><code>void expandCapacity(int minimumCapacity) {
+    //原来数组的两倍+2(为什么这样设置，而不是2倍或其他)
+    int newCapacity = value.length * 2 + 2;
+    if (newCapacity - minimumCapacity &lt; 0)
+    //如果newCapacity小于minimumCapacity，则将扩容大小设置为minimumCapacity
+        newCapacity = minimumCapacity;
+    if (newCapacity &lt; 0) {
+        if (minimumCapacity &lt; 0) // overflow
+            throw new OutOfMemoryError();
+        newCapacity = Integer.MAX_VALUE;
+    }
+    //调用Arrays.copyOf将value复制到扩容后的数组
+    value = Arrays.copyOf(value, newCapacity);
+}
+
+public void ensureCapacity(int minimumCapacity) //子类可以调用的方法实现扩容，在方法中调用ensureCapacityInternal
+private void ensureCapacityInternal(int minimumCapacity) //ensureCapacityInternal调用ensureCapacityInternal
+</code></pre><p>其他方法</p>
+<pre><code>public int length() 返回字符串长度
+
+public int capacity() 返回数组大小
+
+public AbstractStringBuilder appendCodePoint(int codePoint)
+
+public charAt(int index) 返回字符串中第（index+1）个字符
+
+public AbstractStringBuilder deleteCharAt(int index)
+
+public void setLength(int newLength) 设置字符串长度为newLength，如果newLength长度大于count，则以newLength为字符串长度，同时[count,newLengt-1]区间设置字符为&apos;/0&apos;;当newLength长度小于count，则字符串value[0,newLength-1]
+
+public void trimToSize() 如果字符串小于数组长度，将数组长度设置为字符串
+
+public int indexOf(String str) //返回str在字符串中的位置
+
+public int lastIndexOf(String str) //返回str在字符串中最后的位置
+
+public AbstractStringBuilder reverse()//反转
+
+final char[] getValue() 返回数组
+
+public String substring(int start, int end)
+
+public CharSequence subSequence(int start, int end)
+
+public AbstractStringBuilder replace(int start, int end, String str)
+</code></pre><p>StringBuilder</p>
+<pre><code>public final class StringBuilder extends AbstractStringBuilder implements java.io.Serializable, CharSequence
+</code></pre><p>构造函数<br>    public StringBuilder() {<br>        super(16);//默认创建数组大小为16<br>    }<br>    public StringBuilder(int capacity)</p>
+<pre><code>public StringBuilder(String str) {
+    super(str.length() + 16);
+    append(str);
+}
+public StringBuilder(CharSequence seq) {
+    this(seq.length() + 16);
+    append(seq);
+}
+</code></pre><p>其他方法覆盖了AbstractStringBuilder中的方法，然后在方法体内调用对应的AbstractStringBuilder方法。</p>
+<p>StringBuffer</p>
+<p>StringBuffer与StringBuilder类似，只是方法用synchronized进行了修饰。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/AbstractStringBuilder/" class="article-tag-list-link color2">AbstractStringBuilder</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/01/29/AbstractStringBuilder/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-String" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
