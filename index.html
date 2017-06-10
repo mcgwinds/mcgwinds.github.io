@@ -865,6 +865,196 @@ providers.put(cn, p);
 
 
   
+    <article id="post-String" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/01/22/String/">String</a>
+    </h1>
+  
+
+        
+        <a href="/2017/01/22/String/" class="archive-article-date">
+  	<time datetime="2017-01-22T06:21:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-22</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>String表示字符串，Java中所有字符串的字面值都是String类的实例。例如”hello world”,在定义之后就不能被改变。</p>
+<p>类定义:</p>
+<pre><code>public final class String
+implements java.io.Serializable, Comparable&lt;String&gt;, CharSequence
+</code></pre><p>String类实现了Serializable，Comparable<t>,CharSequence接口。String类是final类，也就是说String类没有子类，为什么将String定义为final类型？我的理解是防止子类通过多态修改字符串。</t></p>
+<p>CharSequence接口</p>
+<p>CharSequence接口代表了一个只读的字符串，StringBuffer，StringBuilder也实现了该接口，该接口提供了4个方法：<br>     int length();返回字符串长度<br>     char charAt(int index);返回特定位置字符<br>     CharSequence subSequence(int start, int end);返回子串<br>     public String toString();</p>
+<p>属性:</p>
+<p>私有属性:</p>
+<pre><code>private final char value[];（value数组保存字符串，定义为final类型）
+</code></pre><p>方法:</p>
+<p>String提供了10几种构造函数：</p>
+<pre><code>//默认构造函数。
+ public String() {
+    this.value = new char[0];
+}
+
+//以String参数构造一个新分配的String 对象。
+public String(String original) {
+    this.value = original.value;
+    this.hash = original.hash;
+}
+
+//以char数组为参数
+public String(char value[]) {
+    this.value = Arrays.copyOf(value, value.length);
+}
+</code></pre><p>在Java中，String实例中保存有一个char[]字符数组，char[]字符数组是以unicode码来存储的，String 和 char 为内存形式，byte是网络传输或存储的序列化形式。所以在很多传输和存储的过程中需要将byte[]数组和String进行相互转化。所以，String提供了一系列重载的构造方法来将一个字符数组转化成String，提到byte[]和String之间的相互转换就不得不关注编码问题。String(byte[] bytes, Charset charset)是指通过charset来解码指定的byte数组，将其解码成unicode的char[]数组，够造成新的String。</p>
+<p>这里的bytes字节流是使用charset进行编码的，想要将他转换成unicode的char[]数组，而又保证不出现乱码，那就要指定其解码方式</p>
+<pre><code>String(byte bytes[]) String(byte bytes[], int offset, int length)
+
+String(byte bytes[], Charset charset)
+
+String(byte bytes[], String charsetName)
+
+String(byte bytes[], int offset, int length, Charset charset)
+</code></pre><p>如果我们在使用byte[]构造String的时候，使用的是上面这四种构造方法(带有charsetName或者charset参数)的一种的话，那么就会使用StringCoding.decode方法进行解码，使用的解码的字符集就是我们指定的charsetName或者charset。 我们在使用byte[]构造String的时候，如果没有指明解码使用的字符集的话，那么StringCoding的decode方法首先调用系统的默认编码格式，如果没有指定编码格式则默认使用ISO-8859-1编码格式进行编码操作。主要体现代码如下： </p>
+<pre><code>    static char[] decode(byte[] ba, int off, int len) {
+    String csn = Charset.defaultCharset().name();
+    try {
+        // use charset name decode() variant which provides caching.
+        return decode(csn, ba, off, len);
+    } catch (UnsupportedEncodingException x) {
+        warnUnsupportedCharset(csn);
+    }
+    try {
+        return decode(&quot;ISO-8859-1&quot;, ba, off, len);
+    } catch (UnsupportedEncodingException x) {
+        // If this code is hit during VM initialization, MessageUtils is
+        // the only way we will be able to get any kind of error message.
+        MessageUtils.err(&quot;ISO-8859-1 charset not available: &quot;+ x.toString());
+        // If we can not find ISO-8859-1 (a required encoding) then things
+        // are seriously wrong with the installation.
+        System.exit(1);
+        return null;
+    }
+}
+</code></pre><p>getBytes</p>
+<p>在创建String的时候，可以使用byte[]数组，将一个字节数组转换成字符串，同样，我们可以将一个字符串转换成字节数组，那么String提供了很多重载的getBytes方法。但是，值得注意的是，在使用这些方法的时候一定要注意编码问题。比如：</p>
+<pre><code>String s = &quot;你好，世界！&quot;; 
+byte[] bytes = s.getBytes();
+</code></pre><p>这段代码在不同的平台上运行得到结果是不一样的。由于我们没有指定编码方式，所以在该方法对字符串进行编码的时候就会使用系统的默认编码方式，比如在中文操作系统中可能会使用GBK或者GB2312进行编码，在英文操作系统中有可能使用iso-8859-1进行编码。这样写出来的代码就和机器环境有很强的关联性了，所以，为了避免不必要的麻烦，我们要指定编码方式。如使用以下方式：</p>
+<pre><code>String s = &quot;你好，世界！&quot;; 
+byte[] bytes = s.getBytes(&quot;utf-8&quot;);
+</code></pre><p>其他方法</p>
+<pre><code> length() 返回字符串长度
+
+ isEmpty() 返回字符串是否为空
+
+ charAt(int index) 返回字符串中第（index+1）个字符
+
+ char[] toCharArray() 转化成字符数组
+
+ trim() 去掉两端空格
+
+ toUpperCase() 转化为大写
+
+ toLowerCase() 转化为小写
+
+ String concat(String str) //拼接字符串
+
+ String replace(char oldChar, char newChar) //将字符串中的oldChar字符换成newChar字符
+
+//以上两个方法都使用了String(char[] value, boolean share)；
+
+boolean matches(String regex) //判断字符串是否匹配给定的regex正则表达式
+
+boolean contains(CharSequence s) //判断字符串是否包含字符序列s
+
+String[] split(String regex, int limit) 按照字符regex将字符串分成limit份。
+
+String[] split(String regex)
+
+boolean equalsIgnoreCase(String anotherString)//比较大小
+
+boolean contentEquals(StringBuffer sb)；
+
+boolean contentEquals(CharSequence cs)
+
+boolean endsWith(String suffix) //是否以suffix结尾
+
+boolean startsWith(String prefix, int toffset)//是否以prefix开始
+
+int compareTo(String anotherString)；
+
+int compareToIgnoreCase(String str)；
+
+boolean regionMatches(int toffset, String other, int ooffset,int len)  //局部匹配
+
+boolean regionMatches(boolean ignoreCase, int toffset,String other, int ooffset, int len)   //局部匹配
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/String/" class="article-tag-list-link color2">String</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/01/22/String/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-Byte" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
