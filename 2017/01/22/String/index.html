@@ -22,7 +22,7 @@ String类实现了Serializable，Compar">
 public final class String
 implements java.io.Serializable, Comparable&amp;lt;String&amp;gt;, CharSequence
 String类实现了Serializable，Compar">
-<meta property="og:updated_time" content="2017-06-10T05:54:57.372Z">
+<meta property="og:updated_time" content="2017-06-10T06:01:13.260Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="String">
 <meta name="twitter:description" content="String表示字符串，Java中所有字符串的字面值都是String类的实例。例如”hello world”,在定义之后就不能被改变。
@@ -205,7 +205,7 @@ var _hmt = _hmt || [];
 implements java.io.Serializable, Comparable&lt;String&gt;, CharSequence
 </code></pre><p>String类实现了Serializable，Comparable<t>,CharSequence接口。String类是final类，也就是说String类没有子类，为什么将String定义为final类型？我的理解是防止子类通过多态修改字符串。</t></p>
 <p>CharSequence接口</p>
-<p>CharSequence接口代表了一个只读的字符串，StringBuffer，StringBuilder也实现了该接口，该接口提供了4个方法：<br>     int length();返回字符串长度<br>     char charAt(int index);返回特定位置字符<br>     CharSequence subSequence(int start, int end);返回子串<br>     public String toString();</p>
+<p>CharSequence接口代表了一个只读的字符串，StringBuffer，StringBuilder也实现了该接口，该接口提供了4个方法：<br>    int length();返回字符串长度<br>    char charAt(int index);返回特定位置字符<br>    CharSequence subSequence(int start, int end);返回子串<br>    public String toString();</p>
 <p>属性:</p>
 <p>私有属性:</p>
 <pre><code>private final char value[];（value数组保存字符串，定义为final类型）
@@ -236,17 +236,17 @@ String(byte bytes[], String charsetName)
 
 String(byte bytes[], int offset, int length, Charset charset)
 </code></pre><p>如果我们在使用byte[]构造String的时候，使用的是上面这四种构造方法(带有charsetName或者charset参数)的一种的话，那么就会使用StringCoding.decode方法进行解码，使用的解码的字符集就是我们指定的charsetName或者charset。 我们在使用byte[]构造String的时候，如果没有指明解码使用的字符集的话，那么StringCoding的decode方法首先调用系统的默认编码格式，如果没有指定编码格式则默认使用ISO-8859-1编码格式进行编码操作。主要体现代码如下： </p>
-<pre><code>    static char[] decode(byte[] ba, int off, int len) {
-    String csn = Charset.defaultCharset().name();
-    try {
+<pre><code>static char[] decode(byte[] ba, int off, int len) {
+String csn = Charset.defaultCharset().name();
+try {
         // use charset name decode() variant which provides caching.
         return decode(csn, ba, off, len);
-    } catch (UnsupportedEncodingException x) {
+ } catch (UnsupportedEncodingException x) {
         warnUnsupportedCharset(csn);
-    }
-    try {
+ }
+ try {
         return decode(&quot;ISO-8859-1&quot;, ba, off, len);
-    } catch (UnsupportedEncodingException x) {
+ } catch (UnsupportedEncodingException x) {
         // If this code is hit during VM initialization, MessageUtils is
         // the only way we will be able to get any kind of error message.
         MessageUtils.err(&quot;ISO-8859-1 charset not available: &quot;+ x.toString());
@@ -254,7 +254,7 @@ String(byte bytes[], int offset, int length, Charset charset)
         // are seriously wrong with the installation.
         System.exit(1);
         return null;
-    }
+  }
 }
 </code></pre><p>getBytes</p>
 <p>在创建String的时候，可以使用byte[]数组，将一个字节数组转换成字符串，同样，我们可以将一个字符串转换成字节数组，那么String提供了很多重载的getBytes方法。但是，值得注意的是，在使用这些方法的时候一定要注意编码问题。比如：</p>
@@ -264,23 +264,23 @@ byte[] bytes = s.getBytes();
 <pre><code>String s = &quot;你好，世界！&quot;; 
 byte[] bytes = s.getBytes(&quot;utf-8&quot;);
 </code></pre><p>其他方法</p>
-<pre><code> length() 返回字符串长度
+<pre><code>length() 返回字符串长度
 
- isEmpty() 返回字符串是否为空
+isEmpty() 返回字符串是否为空
 
- charAt(int index) 返回字符串中第（index+1）个字符
+charAt(int index) 返回字符串中第（index+1）个字符
 
- char[] toCharArray() 转化成字符数组
+char[] toCharArray() 转化成字符数组
 
- trim() 去掉两端空格
+trim() 去掉两端空格
 
- toUpperCase() 转化为大写
+toUpperCase() 转化为大写
 
- toLowerCase() 转化为小写
+toLowerCase() 转化为小写
 
- String concat(String str) //拼接字符串
+String concat(String str) //拼接字符串
 
- String replace(char oldChar, char newChar) //将字符串中的oldChar字符换成newChar字符
+String replace(char oldChar, char newChar) //将字符串中的oldChar字符换成newChar字符
 
 //以上两个方法都使用了String(char[] value, boolean share)；
 
