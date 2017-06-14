@@ -885,8 +885,10 @@ providers.put(cn, p);
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Java的枚举定义通过关键字Enum表示。Enum定义类似如下：<br>    package com.mcg.demo;</p>
-<pre><code>public enum EnumDemo 
+        <p>Java的枚举定义通过关键字Enum表示。Enum定义类似如下：</p>
+<pre><code>package com.mcg.demo;
+
+public enum EnumDemo 
 {
 Demo1(&quot;demo1&quot;),Demo2(&quot;demo2&quot;),Demo3(&quot;demo3&quot;);
 
@@ -902,7 +904,7 @@ EnumDemo(String name)
 <pre><code>EnumDemo.values();
 EnumDemo.valueOf(&quot;demo1&quot;);
 EnumDemo.valueOf(EnumDemo.class, &quot;demo1&quot;);
-</code></pre><p>所以应该是编译器在编译源代码的时候，进行了特殊处理。需要分析编译后产生的class文件</p>
+</code></pre><p>所以应该是编译器在编译源代码的时候，进行了特殊处理。需要分析编译后产生的class文件，</p>
 <pre><code>public final class com.mcg.demo.EnumDemo extends java.lang.Enum&lt;com.mcg.demo.EnumDemo&gt; {
 public static final com.mcg.demo.EnumDemo Demo1;
 public static final com.mcg.demo.EnumDemo Demo2;

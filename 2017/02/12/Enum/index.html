@@ -8,37 +8,43 @@
   <link rel="dns-prefetch" href="https://mcgwinds.github.io">
   <title>Enum | 种一颗树最好的是十年以前，其次是现在</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="Java的枚举定义通过关键字Enum表示。Enum定义类似如下：    package com.mcg.demo;
+  <meta name="description" content="Java的枚举定义通过关键字Enum表示。Enum定义类似如下：
+package com.mcg.demo;
+
 public enum EnumDemo 
 {
 Demo1(&amp;quot;demo1&amp;quot;),Demo2(&amp;quot;demo2&amp;quot;),Demo3(&amp;quot;demo3&amp;quot;);
 
 private String name;
 
-EnumDemo(String nam">
+EnumDemo(String name)">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Enum">
 <meta property="og:url" content="https://mcgwinds.github.io/2017/02/12/Enum/index.html">
 <meta property="og:site_name" content="种一颗树最好的是十年以前，其次是现在">
-<meta property="og:description" content="Java的枚举定义通过关键字Enum表示。Enum定义类似如下：    package com.mcg.demo;
+<meta property="og:description" content="Java的枚举定义通过关键字Enum表示。Enum定义类似如下：
+package com.mcg.demo;
+
 public enum EnumDemo 
 {
 Demo1(&amp;quot;demo1&amp;quot;),Demo2(&amp;quot;demo2&amp;quot;),Demo3(&amp;quot;demo3&amp;quot;);
 
 private String name;
 
-EnumDemo(String nam">
-<meta property="og:updated_time" content="2017-06-14T06:46:35.711Z">
+EnumDemo(String name)">
+<meta property="og:updated_time" content="2017-06-14T06:52:57.185Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Enum">
-<meta name="twitter:description" content="Java的枚举定义通过关键字Enum表示。Enum定义类似如下：    package com.mcg.demo;
+<meta name="twitter:description" content="Java的枚举定义通过关键字Enum表示。Enum定义类似如下：
+package com.mcg.demo;
+
 public enum EnumDemo 
 {
 Demo1(&amp;quot;demo1&amp;quot;),Demo2(&amp;quot;demo2&amp;quot;),Demo3(&amp;quot;demo3&amp;quot;);
 
 private String name;
 
-EnumDemo(String nam">
+EnumDemo(String name)">
   
     <link rel="alternative" href="/index.html" title="种一颗树最好的是十年以前，其次是现在" type="application/atom+xml">
   
@@ -208,8 +214,10 @@ var _hmt = _hmt || [];
     
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Java的枚举定义通过关键字Enum表示。Enum定义类似如下：<br>    package com.mcg.demo;</p>
-<pre><code>public enum EnumDemo 
+        <p>Java的枚举定义通过关键字Enum表示。Enum定义类似如下：</p>
+<pre><code>package com.mcg.demo;
+
+public enum EnumDemo 
 {
 Demo1(&quot;demo1&quot;),Demo2(&quot;demo2&quot;),Demo3(&quot;demo3&quot;);
 
@@ -225,7 +233,7 @@ EnumDemo(String name)
 <pre><code>EnumDemo.values();
 EnumDemo.valueOf(&quot;demo1&quot;);
 EnumDemo.valueOf(EnumDemo.class, &quot;demo1&quot;);
-</code></pre><p>所以应该是编译器在编译源代码的时候，进行了特殊处理。需要分析编译后产生的class文件</p>
+</code></pre><p>所以应该是编译器在编译源代码的时候，进行了特殊处理。需要分析编译后产生的class文件，</p>
 <pre><code>public final class com.mcg.demo.EnumDemo extends java.lang.Enum&lt;com.mcg.demo.EnumDemo&gt; {
 public static final com.mcg.demo.EnumDemo Demo1;
 public static final com.mcg.demo.EnumDemo Demo2;
