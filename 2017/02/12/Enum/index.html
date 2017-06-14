@@ -6,17 +6,39 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://mcgwinds.github.io">
-  <title>Tag: JAVA基础 | 种一颗树最好的是十年以前，其次是现在</title>
+  <title>Enum | 种一颗树最好的是十年以前，其次是现在</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录生活点滴">
-<meta property="og:type" content="website">
-<meta property="og:title" content="种一颗树最好的是十年以前，其次是现在">
-<meta property="og:url" content="https://mcgwinds.github.io/tags/JAVA基础/index.html">
+  <meta name="description" content="Java的枚举定义通过关键字Enum表示。Enum定义类似如下：    package com.mcg.demo;
+public enum EnumDemo 
+{
+Demo1(&amp;quot;demo1&amp;quot;),Demo2(&amp;quot;demo2&amp;quot;),Demo3(&amp;quot;demo3&amp;quot;);
+
+private String name;
+
+EnumDemo(String nam">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Enum">
+<meta property="og:url" content="https://mcgwinds.github.io/2017/02/12/Enum/index.html">
 <meta property="og:site_name" content="种一颗树最好的是十年以前，其次是现在">
-<meta property="og:description" content="记录生活点滴">
+<meta property="og:description" content="Java的枚举定义通过关键字Enum表示。Enum定义类似如下：    package com.mcg.demo;
+public enum EnumDemo 
+{
+Demo1(&amp;quot;demo1&amp;quot;),Demo2(&amp;quot;demo2&amp;quot;),Demo3(&amp;quot;demo3&amp;quot;);
+
+private String name;
+
+EnumDemo(String nam">
+<meta property="og:updated_time" content="2017-06-14T06:46:35.711Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="种一颗树最好的是十年以前，其次是现在">
-<meta name="twitter:description" content="记录生活点滴">
+<meta name="twitter:title" content="Enum">
+<meta name="twitter:description" content="Java的枚举定义通过关键字Enum表示。Enum定义类似如下：    package com.mcg.demo;
+public enum EnumDemo 
+{
+Demo1(&amp;quot;demo1&amp;quot;),Demo2(&amp;quot;demo2&amp;quot;),Demo3(&amp;quot;demo3&amp;quot;);
+
+private String name;
+
+EnumDemo(String nam">
   
     <link rel="alternative" href="/index.html" title="种一颗树最好的是十年以前，其次是现在" type="application/atom+xml">
   
@@ -166,36 +188,111 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-Enum" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/02/12/Enum/" class="archive-article-date">
-  	<time datetime="2017-02-12T11:15:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-12</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/02/12/Enum/">Enum</a>
+    <h1 class="article-title" itemprop="name">
+      Enum
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2017/02/12/Enum/" class="archive-article-date">
+  	<time datetime="2017-02-12T11:15:37.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-02-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Java的枚举定义通过关键字Enum表示。Enum定义类似如下：<br>    package com.mcg.demo;</p>
+<pre><code>public enum EnumDemo 
+{
+Demo1(&quot;demo1&quot;),Demo2(&quot;demo2&quot;),Demo3(&quot;demo3&quot;);
+
+private String name;
+
+EnumDemo(String name)
+{
+  this.name=name;
+
+}
+}
+</code></pre><p>当我们使用EnumDemo类时，发现EnumDemo类默认给我们提供了values、valueOf方法</p>
+<pre><code>EnumDemo.values();
+EnumDemo.valueOf(&quot;demo1&quot;);
+EnumDemo.valueOf(EnumDemo.class, &quot;demo1&quot;);
+</code></pre><p>所以应该是编译器在编译源代码的时候，进行了特殊处理。需要分析编译后产生的class文件</p>
+<pre><code>public final class com.mcg.demo.EnumDemo extends java.lang.Enum&lt;com.mcg.demo.EnumDemo&gt; {
+public static final com.mcg.demo.EnumDemo Demo1;
+public static final com.mcg.demo.EnumDemo Demo2;
+public static final com.mcg.demo.EnumDemo Demo3;
+static {Demo1 = new com.mcg.demo.EnumDemo(&quot;Demo1&quot;,0);
+Demo2 = new com.mcg.demo.EnumDemo(&quot;Demo2&quot;,1);
+Demo3 = new com.mcg.demo.EnumDemo(&quot;Demo3&quot;,2);
+$VALUES = (new com.mcg.demo.EnumDemo[] { Demo1, Demo2, Demo3 });}
+private static final com.mcg.demo.EnumDemo $VALUES[];
+private com.mcg.demo.EnumDemo(String s,int i) { super(s, i);}
+public static com.mcg.demo.EnumDemo[] values() { return (com.mcg.demo.EnumDemo[])$VALUES.clone(); }
+public static com.mcg.demo.EnumDemo valueOf(String name){ ... }
+}
+</code></pre><p>短短的几行代码，被编译器处理过之后竟然变得这么多，看来，enmu关键字是java提供给我们的一个语法糖，我们发现，编译器帮我们在编译后默认继承java.lang.Enum类，而不像其他的类一样默认继承Object类。且采用enum声明后，该类会被编译器加上final声明，故该类是无法继承的。Enum是java.lang包中的一个类，Enum类在JDK中是这样描述：(This is the common base class of all Java language enumeration types)Java语言中所有枚举类型的公共基类。</p>
+<pre><code>public abstract class Enum&lt;E extends Enum&lt;E&gt;&gt; implements Comparable&lt;E&gt;, Serializable 
+</code></pre><p>Enum类是一个抽象类，Enum实现了Serializable接口，可以序列化。 Enum实现了Comparable接口，可以进行比较，默认情况下，只有同类型的enum才进行比较（原因见后文），要实现不同类型的enum之间的比较，只能复写compareTo方法。</p>
+<p>构造函数<br>Enum是一个抽象类，不能被实例化，但是他有构造函数，从前面我们反编译出来的代码中，我们也发现了Enum的构造函数，在Enum中只有一个保护类型的构造函数：</p>
+<pre><code>rotected Enum(String name, int ordinal) {
+this.name = name;
+this.ordinal = ordinal;//代表顺序，从0开始；
+}
+</code></pre><p>其他方法</p>
+<pre><code>public String toString() {
+return name;
+}
+
+public final boolean equals(Object other) {
+return this==other;
+}
+
+public final int hashCode() {
+return super.hashCode();
+}
+
+public final int compareTo(E o) {
+Enum other = (Enum)o;
+Enum self = this;
+if (self.getClass() != other.getClass() &amp;&amp; // optimization
+    self.getDeclaringClass() != other.getDeclaringClass())
+    throw new ClassCastException();
+return self.ordinal - other.ordinal;
+}
+
+public final Class&lt;E&gt; getDeclaringClass() {
+Class clazz = getClass();
+Class zuper = clazz.getSuperclass();
+return (zuper == Enum.class) ? clazz : zuper;
+}
+
+//valueOf(String name)调用该方法
+public static &lt;T extends Enum&lt;T&gt;&gt; T valueOf(Class&lt;T&gt; enumType,String name) {
+T result = enumType.enumConstantDirectory().get(name);
+if (result != null)
+    return result;
+if (name == null)
+    throw new NullPointerException(&quot;Name is null&quot;);
+throw new IllegalArgumentException(
+    &quot;No enum constant &quot; + enumType.getCanonicalName() + &quot;.&quot; + name);
+}
+</code></pre>
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -207,7 +304,7 @@ var _hmt = _hmt || [];
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -228,314 +325,113 @@ var _hmt = _hmt || [];
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://mcgwinds.github.io/2017/02/12/Enum/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
   
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/01/29/AbstractStringBuilder/" class="archive-article-date">
-  	<time datetime="2017-01-29T02:13:23.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-29</time>
-</a>
-        </div>
-    	 
+<nav id="article-nav">
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/01/29/AbstractStringBuilder/">AbstractStringBuilder</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/AbstractStringBuilder/" class="article-tag-list-link color2">AbstractStringBuilder</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/01/22/String/" class="archive-article-date">
-  	<time datetime="2017-01-22T06:21:45.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-22</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/01/22/String/">String</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/String/" class="article-tag-list-link color2">String</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/01/13/Byte/" class="archive-article-date">
-  	<time datetime="2017-01-13T13:00:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-13</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/01/13/Byte/">Byte</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/基本类型/" class="article-tag-list-link color5">基本类型</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Byte/" class="article-tag-list-link color5">Byte</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/01/12/Boolean/" class="archive-article-date">
-  	<time datetime="2017-01-12T13:29:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-12</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/01/12/Boolean/">Boolean</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/基本类型/" class="article-tag-list-link color5">基本类型</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Boolean/" class="article-tag-list-link color3">Boolean</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/01/11/Integer/" class="archive-article-date">
-  	<time datetime="2017-01-11T04:29:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-11</time>
-</a>
-        </div>
-    	 
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/01/11/Integer/">Integer</a>
-    </h1>
-  
-
-        <div class="article-info info-on-right">
-          
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-          
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/基本类型/" class="article-tag-list-link color5">基本类型</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Integer/" class="article-tag-list-link color3">Integer</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
+    <a href="/2017/03/12/serviceloader/" id="article-nav-newer" class="article-nav-link-wrap">
+      <i class="icon-circle-left"></i>
+      <div class="article-nav-title">
+        
+          dubbo(1)-&gt;Serviceloader
+        
+      </div>
+    </a>
   
   
-    </div></section>
+    <a href="/2017/01/29/AbstractStringBuilder/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">AbstractStringBuilder</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="Enum" data-title="Enum" data-url="https://mcgwinds.github.io/2017/02/12/Enum/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"litten-hexo"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
   
 
-    
+
 
 
           </div>
@@ -558,9 +454,9 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
-		isTag: true,
+		isTag: false,
 		isCategory: false,
 		open_in_new: true,
 		root: "/",
