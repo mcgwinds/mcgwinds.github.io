@@ -6,18 +6,17 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://mcgwinds.github.io">
-  <title>dubbo(2)-&gt;ExtensionLoader | 种一颗树最好的是十年以前，其次是现在</title>
+  <title>Archives: 2017/7 | 种一颗树最好的是十年以前，其次是现在</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于基础上扩展了一套自己的扩展机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma（https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独立的Ja">
-<meta property="og:type" content="article">
-<meta property="og:title" content="dubbo(2)->ExtensionLoader">
-<meta property="og:url" content="https://mcgwinds.github.io/2017/03/15/ExtensionLoader/index.html">
+  <meta name="description" content="记录生活点滴">
+<meta property="og:type" content="website">
+<meta property="og:title" content="种一颗树最好的是十年以前，其次是现在">
+<meta property="og:url" content="https://mcgwinds.github.io/archives/2017/07/index.html">
 <meta property="og:site_name" content="种一颗树最好的是十年以前，其次是现在">
-<meta property="og:description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于基础上扩展了一套自己的扩展机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma（https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独立的Ja">
-<meta property="og:updated_time" content="2017-04-03T11:46:06.616Z">
+<meta property="og:description" content="记录生活点滴">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="dubbo(2)->ExtensionLoader">
-<meta name="twitter:description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于基础上扩展了一套自己的扩展机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma（https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独立的Ja">
+<meta name="twitter:title" content="种一颗树最好的是十年以前，其次是现在">
+<meta name="twitter:description" content="记录生活点滴">
   
     <link rel="alternative" href="/index.html" title="种一颗树最好的是十年以前，其次是现在" type="application/atom+xml">
   
@@ -167,47 +166,36 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            <article id="post-ExtensionLoader" class="article article-type-post " itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
+            
   
-    <h1 class="article-title" itemprop="name">
-      dubbo(2)-&gt;ExtensionLoader
+  
+    
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2017" class="archive-year">2017</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/07/09/ExtensionLoader/" class="archive-article-date">
+  	<time datetime="2017-07-09T02:12:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-09</time>
+</a>
+        </div>
+    	 
+  
+    <h1 itemprop="name">
+      <a class="archive-article-title" href="/2017/07/09/ExtensionLoader/">dubbo(2)-&gt;Comma</a>
     </h1>
   
 
-        
-        <a href="/2017/03/15/ExtensionLoader/" class="archive-article-date">
-  	<time datetime="2017-03-15T13:12:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-03-15</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>前一篇文章总结了一下JDK的SPI机制，dubbo基于基础上扩展了一套自己的扩展机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma（<a href="https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独立的Java微容器，所以打算先从它讲起，后面的文章再分析dubbo框架中是如何运用ExtensionLoader的。" target="_blank" rel="external">https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独立的Java微容器，所以打算先从它讲起，后面的文章再分析dubbo框架中是如何运用ExtensionLoader的。</a></p>
-<p>Comma，官方介绍的已经非常详细了，这里大体说一下几个特点：</p>
-<p>1）以插件方式加载扩展（SPI）</p>
-<p>2）支持依赖扩展点的自动加载（IOC）</p>
-<p>3 可以有扩展点Wrapper，为扩展写公共Filter代码（AOP）</p>
-<p>下面通过showcase来分析Comma源码了解这几大特点，Comma的代码主要两个类Extension(把一个接口标识成扩展点)，ExtensionLoader(加载和管理扩展)。</p>
-<p>//showcase:<br>    //扩展接口<br>    package com.alibaba.demo.cooma.car;</p>
-<pre><code>import com.alibaba.cooma.Extension;
-
-@Extension(&quot;sport&quot;)
-public interface Car {
-void run();
-}
-</code></pre>
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -219,7 +207,7 @@ void run();
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -240,113 +228,17 @@ void run();
 	</div>
 
 
-      
-
-      
-        
-<div class="share-btn share-icons tooltip-left">
-  <div class="tooltip tooltip-east">
-    <span class="tooltip-item">
-      <a href="javascript:;" class="share-sns share-outer">
-        <i class="icon icon-share"></i>
-      </a>
-    </span>
-    <span class="tooltip-content">
-      <div class="share-wrap">
-        <div class="share-icons">
-          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
-            <i class="icon icon-weibo"></i>
-          </a>
-          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
-            <i class="icon icon-weixin"></i>
-          </a>
-          <a class="qq share-sns" href="javascript:;" data-type="qq">
-            <i class="icon icon-qq"></i>
-          </a>
-          <a class="douban share-sns" href="javascript:;" data-type="douban">
-            <i class="icon icon-douban"></i>
-          </a>
-          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
-            <i class="icon icon-qzone"></i>
-          </a>
-          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
-            <i class="icon icon-facebook"></i>
-          </a>
-          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
-            <i class="icon icon-twitter"></i>
-          </a>
-          <a class="google share-sns" href="javascript:;" data-type="google">
-            <i class="icon icon-google"></i>
-          </a>
         </div>
-      </div>
-    </span>
-  </div>
-</div>
-
-<div class="page-modal wx-share js-wx-box">
-    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
-    <p>扫一扫，分享到微信</p>
-    <div class="wx-qrcode">
-      <img src="http://s.jiathis.com/qrcode.php?url=https://mcgwinds.github.io/2017/03/15/ExtensionLoader/" alt="微信分享二维码">
-    </div>
-</div>
-
-<div class="mask js-mask"></div>
-      
-      <div class="clearfix"></div>
-    </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-  
-<nav id="article-nav">
-  
-    <a href="/2017/03/18/Programmer/" id="article-nav-newer" class="article-nav-link-wrap">
-      <i class="icon-circle-left"></i>
-      <div class="article-nav-title">
-        
-          程序员
-        
-      </div>
-    </a>
   
   
-    <a href="/2017/03/12/serviceloader/" id="article-nav-older" class="article-nav-link-wrap">
-      <div class="article-nav-title">dubbo(1)-&gt;Serviceloader</div>
-      <i class="icon-circle-right"></i>
-    </a>
-  
-</nav>
-
-
-
-
-
-
-  
-  <div class="duoshuo">
-	<!-- 多说评论框 start -->
-	<div class="ds-thread" data-thread-key="ExtensionLoader" data-title="dubbo(2)-&gt;ExtensionLoader" data-url="https://mcgwinds.github.io/2017/03/15/ExtensionLoader/"></div>
-	<!-- 多说评论框 end -->
-	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
-	<script type="text/javascript">
-	var duoshuoQuery = {short_name:"litten-hexo"};
-	(function() {
-		var ds = document.createElement('script');
-		ds.type = 'text/javascript';ds.async = true;
-		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
-		ds.charset = 'UTF-8';
-		(document.getElementsByTagName('head')[0] 
-		 || document.getElementsByTagName('body')[0]).appendChild(ds);
-	})();
-	</script>
-	<!-- 多说公共JS代码 end -->
-</div>
-
+    </div></section>
   
 
-
+    
 
 
           </div>
@@ -369,8 +261,8 @@ void run();
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: true,
-		isArchive: false,
+		isPost: false,
+		isArchive: true,
 		isTag: false,
 		isCategory: false,
 		open_in_new: true,

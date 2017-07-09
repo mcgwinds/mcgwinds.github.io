@@ -6,17 +6,18 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://mcgwinds.github.io">
-  <title>Category: Comma | 种一颗树最好的是十年以前，其次是现在</title>
+  <title>dubbo(2)-&gt;Comma | 种一颗树最好的是十年以前，其次是现在</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="记录生活点滴">
-<meta property="og:type" content="website">
-<meta property="og:title" content="种一颗树最好的是十年以前，其次是现在">
-<meta property="og:url" content="https://mcgwinds.github.io/categories/日志/dubbo/Comma/index.html">
+  <meta name="description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于SPI基础上扩展了一套自己的SPI机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma（https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独">
+<meta property="og:type" content="article">
+<meta property="og:title" content="dubbo(2)->Comma">
+<meta property="og:url" content="https://mcgwinds.github.io/2017/07/09/ExtensionLoader/index.html">
 <meta property="og:site_name" content="种一颗树最好的是十年以前，其次是现在">
-<meta property="og:description" content="记录生活点滴">
+<meta property="og:description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于SPI基础上扩展了一套自己的SPI机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma（https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独">
+<meta property="og:updated_time" content="2017-07-09T07:36:54.448Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="种一颗树最好的是十年以前，其次是现在">
-<meta name="twitter:description" content="记录生活点滴">
+<meta name="twitter:title" content="dubbo(2)->Comma">
+<meta name="twitter:description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于SPI基础上扩展了一套自己的SPI机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma（https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独">
   
     <link rel="alternative" href="/index.html" title="种一颗树最好的是十年以前，其次是现在" type="application/atom+xml">
   
@@ -166,36 +167,121 @@ var _hmt = _hmt || [];
             <canvas data-colors="#eaeaea" data-sectionHeight="100" data-contentId="js-content" id="myCanvas1" class="anm-canvas"></canvas>
           </div>
           <div id="js-content" class="content-ll">
-            
-  
-  
+            <article id="post-ExtensionLoader" class="article article-type-post " itemscope itemprop="blogPost">
+  <div class="article-inner">
     
-    
-      
-      
-      <section class="archives-wrap">
-        <div class="archive-year-wrap">
-          <a href="/archives/2017" class="archive-year">2017</a>
-        </div>
-        <div class="archives">
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      	<div class="article-meta">
-	      	<a href="/2017/07/09/ExtensionLoader/" class="archive-article-date">
-  	<time datetime="2017-07-09T02:12:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-09</time>
-</a>
-        </div>
-    	 
+      <header class="article-header">
+        
   
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2017/07/09/ExtensionLoader/">dubbo(2)-&gt;Comma</a>
+    <h1 class="article-title" itemprop="name">
+      dubbo(2)-&gt;Comma
     </h1>
   
 
-        <div class="article-info info-on-right">
-          
+        
+        <a href="/2017/07/09/ExtensionLoader/" class="archive-article-date">
+  	<time datetime="2017-07-09T02:12:18.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-09</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>前一篇文章总结了一下JDK的SPI机制，dubbo基于SPI基础上扩展了一套自己的SPI机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma（<a href="https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独立的Java微容器，所以打算先从它讲起，后面的文章再分析dubbo框架中是如何运用ExtensionLoader的。" target="_blank" rel="external">https://github.com/alibaba/cooma/wiki），而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独立的Java微容器，所以打算先从它讲起，后面的文章再分析dubbo框架中是如何运用ExtensionLoader的。</a></p>
+<p>Comma，官方介绍的已经非常详细了，这里大体说一下几个特点：</p>
+<p>1）以插件方式加载扩展（SPI）</p>
+<p>2）支持依赖扩展点的自动加载（IOC）</p>
+<p>3 可以有扩展点Wrapper，为扩展写公共Filter代码（AOP）</p>
+<p>下面通过分析Comma源码来了解Comma是这几大特点，Comma的代码主要两个类Extension(把一个接口标识成扩展点)，ExtensionLoader(加载和管理扩展)。</p>
+<p>Extension：是一个注解，通过Extension注解将一个接口标识成扩展点。</p>
+<pre><code>@Documented
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.TYPE})
+public @interface Extension {
+
+/**
+ * the default extension name.
+ *
+ * @since 0.1.0
+ */
+String value() default &quot;&quot;;
+
+ }
+</code></pre><p>ExtensionLoader：ExtensionLoader类应该说是Comma的核心，通过它实现扩展点（SPI）的加载，扩展点（IOC）的依赖注入，扩展点（AOP）的包装。</p>
+<p>属性：<br>加载相关属性：</p>
+<pre><code>//扩展点的加载相对路径（对应JDk SPI的扩展点加载路径&quot;META-INF/service/&quot;）
+private static final String EXTENSION_CONF_DIRECTORY = &quot;META-INF/extensions/&quot;; 
+
+//适配类key标识（对应dubbo中的Adaptive注解）
+private static final String PREFIX_ADAPTIVE_CLASS = &quot;*&quot;;
+
+//包装类key标识（对应dubbo中的cachedWrapperClasses）
+//private static final String PREFIX_WRAPPER_CLASS = &quot;+&quot;;
+
+//名字分隔
+private static final Pattern NAME_SEPARATOR = Pattern.compile(&quot;\\s*,+\\s*&quot;);
+
+//名字校验
+private static final Pattern NAME_PATTERN = Pattern.compile(&quot;[a-zA-Z0-9_]+&quot;);
+
+//类型与ExtensionLoader的映射，通过类型取对应的ExtensionLoader
+private static final ConcurrentMap&lt;Class&lt;?&gt;, ExtensionLoader&lt;?&gt;&gt; EXTENSION_LOADERS = new ConcurrentHashMap&lt;Class&lt;?&gt;, ExtensionLoader&lt;?&gt;&gt;();
+</code></pre><p>扩展点相关属性</p>
+<pre><code>private final Class&lt;T&gt; type;
+//默认扩展点
+private final String defaultExtension;
+
+private final Holder&lt;Map&lt;String, Class&lt;?&gt;&gt;&gt; extClassesHolder = new Holder&lt;Map&lt;String, Class&lt;?&gt;&gt;&gt;();
+private volatile Map&lt;String, Map&lt;String, String&gt;&gt; name2Attributes;
+private final ConcurrentMap&lt;Class&lt;?&gt;, String&gt; extClass2Name = new ConcurrentHashMap&lt;Class&lt;?&gt;, String&gt;();
+
+//适配类，适配类唯一
+private volatile Class&lt;?&gt; adaptiveClass = null;
+//包装类映射关系
+private volatile Map&lt;String, Class&lt;? extends T&gt;&gt; name2Wrapper;
+</code></pre><p>方法：</p>
+<pre><code>//私有构造函数
+private ExtensionLoader(Class&lt;T&gt; type)
+</code></pre><p>设置ExtensionLoader的type属性，type属性用于获取type对应的所有扩展点，以及默认扩展点属性defaultExtension。</p>
+<pre><code>//获取类对应的ExtensionLoader
+public static &lt;T&gt; ExtensionLoader&lt;T&gt; getExtensionLoader(Class&lt;T&gt; type)
+</code></pre><p>因为ExtensionLoader是私有的，所以只能通过该方法获取类对应的ExtensionLoader，该方法首先判断type是否为null，若为null则抛出参数异常，是否是接口，若不为接口则抛出参数异常，判断接口是否有Extension注解标识，若没有抛出参数一样。如果上述条件都通过，则根据类型到EXTENSION_LOADERS中取对应的EXTENSION_LOADERS，若为null，则新建一个ExtensionLoader，将类型作为key，ExtensionLoader为value放入map中。</p>
+<p>获取扩展点：</p>
+<pre><code>public T getExtension(String name)
+public T getExtension(String name, Map&lt;String, String&gt; properties)
+public T getExtension(Map&lt;String, String&gt; properties)
+public T getExtension(String name, List&lt;String&gt; wrappers)
+public T getExtension(String name, Map&lt;String, String&gt; properties, List&lt;String&gt; wrappers)
+</code></pre><p>name：扩展点对应的标识，通过类获取对应的扩展点，例如：</p>
+<pre><code>impl1=com.alibaba.cooma.ext2.impl.Ext2Impl
+</code></pre><p>通过name的impl1，可以获取Ext2Impl。<br>properties：用于扩展点的依赖注入属性值<br>wrappers：根据wrappers中的值从name2Wrapper中获取包装类。</p>
+<p>getExtension扩展点的获取执行逻辑：1.createExtension获取扩展点然后实例化扩展点;2.inject依赖注入扩展点;若有包装类则对扩展类执行包装操作createWrapper;</p>
+<p>获取扩展点然后实例化扩展点:</p>
+<pre><code>createExtension——&gt;getExtensionClass——&gt;getExtensionClasses——&gt;loadExtensionClasses0——&gt;readExtension0
+</code></pre><p>createExtension:执行getExtensionClass操作，获取扩展点class，然后实例化。</p>
+<p>getExtensionClass：执行getExtensionClasses()操作，返回对应的extClassesHolder map，然后根据参数name，获取对应的扩展点class。</p>
+<p>getExtensionClasses：判断extClassesHolder中是否有值，没有调用loadExtensionClasses0进行加载。</p>
+<p>loadExtensionClasses0：根据fileName = EXTENSION_CONF_DIRECTORY + type.getName()[META-INF/extensions/{type}],获取文件，调用readExtension0获取文件内容。</p>
+<p>readExtension0：按行读取文件内容，如果name以PREFIX_ADAPTIVE_CLASS，这该扩展点是一个适配类，若以PREFIX_WRAPPER_CLASS开头，则该类是一个包装类，判断构造函数是否正确。若既不是适配类，也不是包装类，则判断是否有默认构造函数。</p>
+<p>依赖注入：</p>
+<p>private T inject(T instance, Map<string, string=""> properties)</string,></p>
+<p>遍历扩展点实例的所有方法，方法名以set开头，参数个数为1，方法是public方法，若属性也是一个扩展点，则获取扩展点，然后通过反射进行依赖注入。</p>
+<p>扩展点的包装：</p>
+<pre><code>private T createWrapper(T instance, Map&lt;String, String&gt; properties, List&lt;String&gt; wrappers)
+</code></pre><p>遍历wrappers，取出对应的包装类，包装类也是一个扩展点，它的职责就是对具体的扩展点进行能力增强。得到包装类以后，获取包含参数为扩展的构造函数，然后进行依赖注入。</p>
+<p>获取默认的扩展点：</p>
+<pre><code>public T getDefaultExtension()
+public T getDefaultExtension(List&lt;String&gt; wrappers)
+</code></pre><p>以参数defaultExtension调用getExtension获取扩展点。</p>
+<p>通过上面的分析，其实使用comma很容易，首先建立接口，然后在接口上注@Extension(“”)注解，基于该接口新建扩展点，在META-INF/extensions/{type}下书写扩展点，调用getExtensionLoader获得ExtensionLoader，通过获得的ExtensionLoader的getExtension方法获取扩展点实例。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
@@ -207,7 +293,7 @@ var _hmt = _hmt || [];
 		</ul>
 	</div>
 
-          
+      
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -228,17 +314,104 @@ var _hmt = _hmt || [];
 	</div>
 
 
+      
+
+      
+        
+<div class="share-btn share-icons tooltip-left">
+  <div class="tooltip tooltip-east">
+    <span class="tooltip-item">
+      <a href="javascript:;" class="share-sns share-outer">
+        <i class="icon icon-share"></i>
+      </a>
+    </span>
+    <span class="tooltip-content">
+      <div class="share-wrap">
+        <div class="share-icons">
+          <a class="weibo share-sns" href="javascript:;" data-type="weibo">
+            <i class="icon icon-weibo"></i>
+          </a>
+          <a class="weixin share-sns wxFab" href="javascript:;" data-type="weixin">
+            <i class="icon icon-weixin"></i>
+          </a>
+          <a class="qq share-sns" href="javascript:;" data-type="qq">
+            <i class="icon icon-qq"></i>
+          </a>
+          <a class="douban share-sns" href="javascript:;" data-type="douban">
+            <i class="icon icon-douban"></i>
+          </a>
+          <a class="qzone share-sns" href="javascript:;" data-type="qzone">
+            <i class="icon icon-qzone"></i>
+          </a>
+          <a class="facebook share-sns" href="javascript:;" data-type="facebook">
+            <i class="icon icon-facebook"></i>
+          </a>
+          <a class="twitter share-sns" href="javascript:;" data-type="twitter">
+            <i class="icon icon-twitter"></i>
+          </a>
+          <a class="google share-sns" href="javascript:;" data-type="google">
+            <i class="icon icon-google"></i>
+          </a>
         </div>
-        <div class="clearfix"></div>
-    </header>
+      </div>
+    </span>
+  </div>
+</div>
+
+<div class="page-modal wx-share js-wx-box">
+    <a class="close js-modal-close" href="javascript:;"><i class="icon icon-close"></i></a>
+    <p>扫一扫，分享到微信</p>
+    <div class="wx-qrcode">
+      <img src="http://s.jiathis.com/qrcode.php?url=https://mcgwinds.github.io/2017/07/09/ExtensionLoader/" alt="微信分享二维码">
+    </div>
+</div>
+
+<div class="mask js-mask"></div>
+      
+      <div class="clearfix"></div>
+    </div>
   </div>
 </article>
+
+  
+<nav id="article-nav">
   
   
-    </div></section>
+    <a href="/2017/03/18/Programmer/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">程序员</div>
+      <i class="icon-circle-right"></i>
+    </a>
+  
+</nav>
+
+
+
+
+
+
+  
+  <div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="ExtensionLoader" data-title="dubbo(2)-&gt;Comma" data-url="https://mcgwinds.github.io/2017/07/09/ExtensionLoader/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"litten-hexo"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
   
 
-    
+
 
 
           </div>
@@ -261,10 +434,10 @@ var _hmt = _hmt || [];
 	var yiliaConfig = {
 		mathjax: false,
 		isHome: false,
-		isPost: false,
+		isPost: true,
 		isArchive: false,
 		isTag: false,
-		isCategory: true,
+		isCategory: false,
 		open_in_new: true,
 		root: "/",
 		innerArchive: true,
