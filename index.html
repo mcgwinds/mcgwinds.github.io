@@ -275,7 +275,7 @@ public T getExtension(String name, Map&lt;String, String&gt; properties, List&lt
 public T getDefaultExtension(List&lt;String&gt; wrappers)
 </code></pre><p>以参数defaultExtension调用getExtension获取扩展点。</p>
 <p>通过上面的分析，其实使用Cooma很容易，首先建立接口，然后在接口上注@Extension(“”)注解，基于该接口新建扩展点，在META-INF/extensions/{type}下书写扩展点，调用getExtensionLoader获得ExtensionLoader，通过获得的ExtensionLoader的getExtension方法获取扩展点实例。</p>
-<p>参考：（<a href="https://github.com/alibaba/cooma/wiki" target="_blank" rel="external">https://github.com/alibaba/cooma/wiki</a></p>
+<p>参考：<a href="https://github.com/alibaba/cooma/wiki" target="_blank" rel="external">https://github.com/alibaba/cooma/wiki</a></p>
 
       
 

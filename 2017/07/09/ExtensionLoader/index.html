@@ -14,7 +14,7 @@
 <meta property="og:url" content="https://mcgwinds.github.io/2017/07/09/ExtensionLoader/index.html">
 <meta property="og:site_name" content="种一颗树最好的是十年以前，其次是现在">
 <meta property="og:description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于SPI基础上扩展了一套自己的SPI机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma，而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独立的Java微容器，所以打算先从它讲起，后面的文章再分析dubbo框架中是如何">
-<meta property="og:updated_time" content="2017-07-09T07:42:55.710Z">
+<meta property="og:updated_time" content="2017-07-09T07:44:59.446Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="dubbo(2)->Cooma">
 <meta name="twitter:description" content="前一篇文章总结了一下JDK的SPI机制，dubbo基于SPI基础上扩展了一套自己的SPI机制，通过ExtensionLoader类实现。第一次看ExtensionLoader源码，一脸懵逼，debug几次还是云里雾里。后来通过网上查资料，看到了Cooma，而Cooma的来源就是dubbo项目中的SPI。Cooma是一个独立的Java微容器，所以打算先从它讲起，后面的文章再分析dubbo框架中是如何">
@@ -274,7 +274,7 @@ public T getExtension(String name, Map&lt;String, String&gt; properties, List&lt
 public T getDefaultExtension(List&lt;String&gt; wrappers)
 </code></pre><p>以参数defaultExtension调用getExtension获取扩展点。</p>
 <p>通过上面的分析，其实使用Cooma很容易，首先建立接口，然后在接口上注@Extension(“”)注解，基于该接口新建扩展点，在META-INF/extensions/{type}下书写扩展点，调用getExtensionLoader获得ExtensionLoader，通过获得的ExtensionLoader的getExtension方法获取扩展点实例。</p>
-<p>参考：（<a href="https://github.com/alibaba/cooma/wiki" target="_blank" rel="external">https://github.com/alibaba/cooma/wiki</a></p>
+<p>参考：<a href="https://github.com/alibaba/cooma/wiki" target="_blank" rel="external">https://github.com/alibaba/cooma/wiki</a></p>
 
       
 
