@@ -168,6 +168,171 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
+    <article id="post-Boolean" class="article article-type-post  article-index" itemscope itemprop="blogPost">
+  <div class="article-inner">
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2017/01/12/Boolean/">Boolean</a>
+    </h1>
+  
+
+        
+        <a href="/2017/01/12/Boolean/" class="archive-article-date">
+  	<time datetime="2017-01-12T13:29:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-12</time>
+</a>
+        
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>Boolean类是基本类型boolean的包装类。</p>
+<p>类定义:</p>
+<pre><code>public final class Boolean implements Serializable, Comparable&lt;Boolean&gt;
+</code></pre><p>类的定义与Integer类似，这里就不累赘了。</p>
+<p>属性:</p>
+<p>私有属性:</p>
+<pre><code>private final boolean value;（value属性就是Boolean对象中真正保存boolean值的）
+</code></pre><p>当我们使用new Boolean(True)创建一个Boolean对象的时候，就会用以下形式给value赋值</p>
+<pre><code>public Boolean(boolean arg0) {
+    this.value = arg0;
+}
+</code></pre><p>公共属性:</p>
+<pre><code>//ture对应的Boolean静态常量。
+public static final Boolean TRUE = new Boolean(true);
+//false对应的Boolean静态常量
+public static final Boolean FALSE = new Boolean(false);
+public static final Class&lt;Boolean&gt; TYPE = Class
+        .getPrimitiveClass(&quot;boolean&quot;);
+</code></pre><p>方法:</p>
+<p>Boolean提供了两个构造方法：</p>
+<pre><code>//构造一个新分配的 Boolean 对象，它表示指定的 boolean 值。
+public Boolean(boolean arg0) {
+    this.value = arg0;
+}
+
+
+//构造一个新分配的 Boolean 对象，它表示 String 参数所指示的 boolean 值。
+public Boolean(String arg0) {
+    this(toBoolean(arg0));
+}
+</code></pre><p>Boolean valueOf(boolean i)方法:</p>
+<pre><code>//valueOf方法源码
+public static Boolean valueOf(boolean arg) {
+    return arg ? TRUE : FALSE;
+}
+</code></pre><p>当参数是true时取常量TRUE，当参数是false时取常量FALSE。</p>
+<p>String转成Boolean的方法:</p>
+<pre><code>boolean getBoolean(String arg)
+boolean toBoolean(String arg)
+parseBoolean(String arg)
+Boolean valueOf(String arg)
+</code></pre><p>getBoolean:</p>
+<pre><code>public static boolean getBoolean(String arg) {
+    boolean arg0 = false;
+
+    try {
+        arg0 = toBoolean(System.getProperty(arg));
+    } catch (IllegalArgumentException arg2) {
+        ;
+    } catch (NullPointerException arg3) {
+        ;
+    }
+
+    return arg0;
+}
+</code></pre><p>确定具有指定名称的系统属性的Boolean值。 </p>
+<p>toBoolean:</p>
+<pre><code>private static boolean toBoolean(String arg) 
+{
+    return arg != null &amp;&amp; arg.equalsIgnoreCase(&quot;true&quot;);
+}
+</code></pre><p>将参数与字符串true进行比较</p>
+<p>parseBoolean:</p>
+<pre><code>public static boolean parseBoolean(String arg) {
+    return toBoolean(arg);
+}
+</code></pre><p>该方法调用toBoolean，将String转化为boolean。</p>
+<p>boolean转成String的方法:<br>    String toString(boolean arg)</p>
+<p>直接看toString方法，toString方法的定义比较简单，就是把一个boolean类型转换成字符串类型。</p>
+<pre><code>public static String toString(boolean arg) {
+    return arg ? &quot;true&quot; : &quot;false&quot;;
+}
+</code></pre><p>compareTo方法:</p>
+<pre><code>public int compareTo(Boolean arg0) {
+    return compare(this.value, arg0.value);
+}
+
+public static int compare(boolean arg, boolean arg0) {
+    return arg == arg0 ? 0 : (arg ? 1 : -1);
+}
+</code></pre><p>代码实现比较简单，就是拿出其中的boolean类型的value进行比较。</p>
+
+      
+
+      
+    </div>
+    <div class="article-info article-info-index">
+      
+      
+	<div class="article-tag tagcloud">
+		<i class="icon-price-tags icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+      
+	<div class="article-category tagcloud">
+		<i class="icon-book icon"></i>
+		<ul class="article-tag-list">
+			 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/基本类型/" class="article-tag-list-link color5">基本类型</a>
+        		</li>
+      		 
+        		<li class="article-tag-list-item">
+        			<a href="/categories/Boolean/" class="article-tag-list-link color3">Boolean</a>
+        		</li>
+      		
+		</ul>
+	</div>
+
+
+      
+        <p class="article-more-link">
+          <a class="article-more-a" href="/2017/01/12/Boolean/">展开全文 >></a>
+        </p>
+      
+
+      
+      <div class="clearfix"></div>
+    </div>
+  </div>
+</article>
+
+
+
+
+
+
+
+
+  
     <article id="post-Integer" class="article article-type-post  article-index" itemscope itemprop="blogPost">
   <div class="article-inner">
     
@@ -508,6 +673,10 @@ return (x &lt; y) ? -1 : ((x == y) ? 0 : 1);
              
               <li class="article-tag-list-item">
                 <a href="javascript:void(0)" class="js-tag color1">Cooma</a>
+              </li>
+             
+              <li class="article-tag-list-item">
+                <a href="javascript:void(0)" class="js-tag color2">Spring</a>
               </li>
             
             <div class="clearfix"></div>
