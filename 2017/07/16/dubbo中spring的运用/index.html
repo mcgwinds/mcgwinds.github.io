@@ -18,7 +18,7 @@ dubbo中关于spring的运用主要在dubbo-config-spring包。打开该包，�
 <meta property="og:description" content="spring是大家熟悉的，而且经常用到的一个成熟框架，通过spring可以将对象的创建交给框架，从而实现解耦。Spring有两大重要的特性：IoC，AOP。IoC是依赖注入，AOP是面向切面编程。
 dubbo中是如何运用spring的呢？
 dubbo中关于spring的运用主要在dubbo-config-spring包。打开该包，发现也就8个类，这篇博客主要讲解DubboBeanDefinitio">
-<meta property="og:updated_time" content="2017-07-23T14:24:54.658Z">
+<meta property="og:updated_time" content="2017-07-23T14:29:25.455Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="dubbo(3)->Spring的运用(1)">
 <meta name="twitter:description" content="spring是大家熟悉的，而且经常用到的一个成熟框架，通过spring可以将对象的创建交给框架，从而实现解耦。Spring有两大重要的特性：IoC，AOP。IoC是依赖注入，AOP是面向切面编程。
@@ -195,7 +195,7 @@ var _hmt = _hmt || [];
       
         <p>spring是大家熟悉的，而且经常用到的一个成熟框架，通过spring可以将对象的创建交给框架，从而实现解耦。Spring有两大重要的特性：IoC，AOP。IoC是依赖注入，AOP是面向切面编程。</p>
 <p>dubbo中是如何运用spring的呢？</p>
-<p>dubbo中关于spring的运用主要在dubbo-config-spring包。打开该包，发现也就8个类，这篇博客主要讲解DubboBeanDefinitionParser、DubboNamespaceHandler。另外的三个类Service<br>Bean、ReferenceBean、AnnotationBean在叙述上面两个类的时候会涉及到，其他的类这里暂不讨论。<br>看dubbo的spring配置发现，其中的有些节点以dubbo:service dubbo：application开头。其实这是dubbo扩展了spring。下面分析dubbo是这样扩展运用spring与自己的配置结合起来的。</p>
+<p>dubbo中关于spring的运用主要在dubbo-config-spring包。打开该包，发现也就8个类，这篇博客主要讲解DubboBeanDefinitionParser、DubboNamespaceHandler。另外的三个类Service<br>Bean、ReferenceBean、AnnotationBean在叙述上面两个类的时候会涉及到，其他的类这里暂不讨论。<br>看dubbo的spring配置发现，其中的有些节点以dubbo:service dubbo：application开头。其实这是dubbo扩展了spring。下面分析dubbo是怎样扩展运用spring与自己的配置结合起来的。</p>
 <p>DubboBeanDefinitionParser类：</p>
 <pre><code>public class DubboBeanDefinitionParser implements BeanDefinitionParser
 </code></pre><p>上面是DubboBeanDefinitionParser类的定义，DubboBeanDefinitionParser类实现了BeanDefinitionParser，查看spring的源码会发现BeanDefinitionParser接口用于解析xml文件中的配置，然后将配置转化为java模型。解析通过实现parse方法实现，在parse方法主要完成element对象的解析，同时将解析的属性转化到beanDefinition中，具体解析逻辑就不叙述。</p>
@@ -217,7 +217,7 @@ var _hmt = _hmt || [];
 }
 </code></pre><p>上面是init方法，其实init方法很简单，就是将节点与对应的解析器进行映射，这也就是为什么出现dubbo:service的时候，就会是DubboBeanDefinitionParser了。我们发现上面DubboBeanDefinitionParser第一个参数都是一个class，其实这个class就到时创建的对象，也就是说xml中service节点里面的描述会转化到servicebean，reference就对应ReferenceBean，annotation对应AnnotationBean。</p>
 <p>那spring在解析过程中又是怎么找到DubboNamespaceHandler？同时我们知道xml都有一套规范，那dubbo又是运用了怎么的原理来让自己符合spring的规范的呢。</p>
-<p>这里需要查看resources文件件，在resources文件夹里面有dubbo.xsd spring.handlers spring.schemas </p>
+<p>这里需要查看resources文件夹，在resources文件夹里面有dubbo.xsd spring.handlers spring.schemas </p>
 <p>dubbo.xsd：就是一套dubbo的xml定义规范</p>
 <p>spring.handlers:</p>
 <pre><code>http\://code.alibabatech.com/schema/dubbo=com.alibaba.dubbo.config.spring.schema.DubboNamespaceHandler
