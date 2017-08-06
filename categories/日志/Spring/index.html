@@ -6,12 +6,12 @@
   <meta name="renderer" content="webkit">
   <meta http-equiv="X-UA-Compatible" content="IE=edge" >
   <link rel="dns-prefetch" href="https://mcgwinds.github.io">
-  <title>种一颗树最好的是十年以前，其次是现在</title>
+  <title>Category: Spring | 种一颗树最好的是十年以前，其次是现在</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="记录生活点滴">
 <meta property="og:type" content="website">
 <meta property="og:title" content="种一颗树最好的是十年以前，其次是现在">
-<meta property="og:url" content="https://mcgwinds.github.io/page/2/index.html">
+<meta property="og:url" content="https://mcgwinds.github.io/categories/日志/Spring/index.html">
 <meta property="og:site_name" content="种一颗树最好的是十年以前，其次是现在">
 <meta property="og:description" content="记录生活点滴">
 <meta name="twitter:card" content="summary">
@@ -168,114 +168,46 @@ var _hmt = _hmt || [];
           <div id="js-content" class="content-ll">
             
   
-    <article id="post-Byte" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
     
-      <header class="article-header">
-        
+    
+      
+      
+      <section class="archives-wrap">
+        <div class="archive-year-wrap">
+          <a href="/archives/2017" class="archive-year">2017</a>
+        </div>
+        <div class="archives">
+    
+    <article class="archive-article archive-type-post">
+  <div class="archive-article-inner">
+    <header class="archive-article-header">
+      	<div class="article-meta">
+	      	<a href="/2017/07/23/aspect/" class="archive-article-date">
+  	<time datetime="2017-07-23T04:39:14.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-07-23</time>
+</a>
+        </div>
+    	 
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/13/Byte/">Byte</a>
+      <a class="archive-article-title" href="/2017/07/23/aspect/">AOP</a>
     </h1>
   
 
-        
-        <a href="/2017/01/13/Byte/" class="archive-article-date">
-  	<time datetime="2017-01-13T13:00:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-13</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Byte类是基本类型byte的包装类。</p>
-<p>类定义:</p>
-<pre><code>public final class Byte extends Number implements Comparable&lt;Byte&gt;
-</code></pre><p>属性:</p>
-<p>私有属性:</p>
-<pre><code>private final byte value;（value属性就是Byte对象中真正保存int值的）
-</code></pre><p>公共属性:</p>
-<pre><code>public static final byte MIN_VALUE = -128;
-public static final byte MAX_VALUE = 127;
-public static final Class&lt;Byte&gt; TYPE = Class.getPrimitiveClass(&quot;byte&quot;);
-public static final int SIZE = 8;
-</code></pre><p>方法:</p>
-<p>Integer提供了两个构造方法：</p>
-<pre><code>//构造一个新分配的 Byte 对象，它表示指定的 byte 值。
-public Byte(byte arg0) {
-    this.value = arg0;
-}
-
-//构造一个新分配的 Byte 对象，它表示 String 参数所指示的 byte 值。
-public Byte(String arg0) throws NumberFormatException {
-    this.value = parseByte(arg0, 10);
-}
-</code></pre><p>Byte valueOf(byte arg)方法（effective java第一条准则）:</p>
-<pre><code>//valueOf方法源码
-public static Byte valueOf(byte arg) {
-    return Byte.ByteCache.cache[arg + 128];
-}
-</code></pre><p>Byte类和Integer一样，调用valueOf方法时，会从缓存中取，不过不同的是Byte类调用valueOf取得都是缓存ByteCache中的值。</p>
-<pre><code>    private static class ByteCache {
-    static final Byte[] cache = new Byte[256];
-
-    static {
-        for (int arg = 0; arg &lt; cache.length; ++arg) {
-            cache[arg] = new Byte((byte) (arg - 128));
-        }
-
-    }
-}
-</code></pre><p>作为Byte类的静态内部类，和Byte类一起加载，加载过程中会创建一个长度为256的数组，同时在静态内部块中初始化。</p>
-<p>String转成Byte（byte）的方法:</p>
-<pre><code>Byte decode(String arg)
-Byte valueOf(String arg, int arg0)
-byte parseByte(String arg)
-byte parseByte(String arg, int arg0)
-</code></pre><p>上述方法都是直接或间接的先将String转化为int类型，例如parseByte(String arg, int arg0)方法首先将String转化为int，然后判断该值是否在[-128，127]之间。</p>
-<pre><code>public static byte parseByte(String arg, int arg0)
-        throws NumberFormatException {
-    int arg1 = Integer.parseInt(arg, arg0);
-    if (arg1 &gt;= -128 &amp;&amp; arg1 &lt;= 127) {
-        return (byte) arg1;
-    } else {
-        throw new NumberFormatException(&quot;Value out of range. Value:\&quot;&quot;
-                + arg + &quot;\&quot; Radix:&quot; + arg0);
-    }
-}
-</code></pre><p>int转成String的方法:</p>
-<pre><code>String toString(byte arg) 
-</code></pre><p>Byte的toString(byte arg)方法调用的是Integer的toString(byte arg，10)方法。</p>
-<p>compareTo方法:</p>
-<p>Byte类实现了Comparable<byte>接口，所以Byte对象可以和另外一个Byte对象进行比较。</byte></p>
-<pre><code> public int compareTo(Byte arg0) {
-    return compare(this.value, arg0.value);
-}
-
-public static int compare(byte arg, byte arg0) {
-    return arg - arg0;
-}
-</code></pre><p>代码实现比较简单，就是拿出其中的byte类型的value进行比较。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
+        <div class="article-info info-on-right">
+          
 	<div class="article-tag tagcloud">
 		<i class="icon-price-tags icon"></i>
 		<ul class="article-tag-list">
 			 
         		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
+        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">Spring</a>
         		</li>
       		
 		</ul>
 	</div>
 
-      
+          
 	<div class="article-category tagcloud">
 		<i class="icon-book icon"></i>
 		<ul class="article-tag-list">
@@ -285,437 +217,24 @@ public static int compare(byte arg, byte arg0) {
         		</li>
       		 
         		<li class="article-tag-list-item">
-        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/基本类型/" class="article-tag-list-link color5">基本类型</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Byte/" class="article-tag-list-link color5">Byte</a>
+        			<a href="/categories/Spring/" class="article-tag-list-link color2">Spring</a>
         		</li>
       		
 		</ul>
 	</div>
 
 
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/01/13/Byte/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
+        </div>
+        <div class="clearfix"></div>
+    </header>
   </div>
 </article>
-
-
-
-
-
-
-
-
   
-    <article id="post-Boolean" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
+  
+    </div></section>
+  
+
     
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/12/Boolean/">Boolean</a>
-    </h1>
-  
-
-        
-        <a href="/2017/01/12/Boolean/" class="archive-article-date">
-  	<time datetime="2017-01-12T13:29:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-12</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Boolean类是基本类型boolean的包装类。</p>
-<p>类定义:</p>
-<pre><code>public final class Boolean implements Serializable, Comparable&lt;Boolean&gt;
-</code></pre><p>类的定义与Integer类似，这里就不累赘了。</p>
-<p>属性:</p>
-<p>私有属性:</p>
-<pre><code>private final boolean value;（value属性就是Boolean对象中真正保存boolean值的）
-</code></pre><p>当我们使用new Boolean(True)创建一个Boolean对象的时候，就会用以下形式给value赋值</p>
-<pre><code>public Boolean(boolean arg0) {
-    this.value = arg0;
-}
-</code></pre><p>公共属性:</p>
-<pre><code>//ture对应的Boolean静态常量。
-public static final Boolean TRUE = new Boolean(true);
-//false对应的Boolean静态常量
-public static final Boolean FALSE = new Boolean(false);
-public static final Class&lt;Boolean&gt; TYPE = Class
-        .getPrimitiveClass(&quot;boolean&quot;);
-</code></pre><p>方法:</p>
-<p>Boolean提供了两个构造方法：</p>
-<pre><code>//构造一个新分配的 Boolean 对象，它表示指定的 boolean 值。
-public Boolean(boolean arg0) {
-    this.value = arg0;
-}
-
-
-//构造一个新分配的 Boolean 对象，它表示 String 参数所指示的 boolean 值。
-public Boolean(String arg0) {
-    this(toBoolean(arg0));
-}
-</code></pre><p>Boolean valueOf(boolean i)方法:</p>
-<pre><code>//valueOf方法源码
-public static Boolean valueOf(boolean arg) {
-    return arg ? TRUE : FALSE;
-}
-</code></pre><p>当参数是true时取常量TRUE，当参数是false时取常量FALSE。</p>
-<p>String转成Boolean的方法:</p>
-<pre><code>boolean getBoolean(String arg)
-boolean toBoolean(String arg)
-parseBoolean(String arg)
-Boolean valueOf(String arg)
-</code></pre><p>getBoolean:</p>
-<pre><code>public static boolean getBoolean(String arg) {
-    boolean arg0 = false;
-
-    try {
-        arg0 = toBoolean(System.getProperty(arg));
-    } catch (IllegalArgumentException arg2) {
-        ;
-    } catch (NullPointerException arg3) {
-        ;
-    }
-
-    return arg0;
-}
-</code></pre><p>确定具有指定名称的系统属性的Boolean值。 </p>
-<p>toBoolean:</p>
-<pre><code>private static boolean toBoolean(String arg) 
-{
-    return arg != null &amp;&amp; arg.equalsIgnoreCase(&quot;true&quot;);
-}
-</code></pre><p>将参数与字符串true进行比较</p>
-<p>parseBoolean:</p>
-<pre><code>public static boolean parseBoolean(String arg) {
-    return toBoolean(arg);
-}
-</code></pre><p>该方法调用toBoolean，将String转化为boolean。</p>
-<p>boolean转成String的方法:<br>    String toString(boolean arg)</p>
-<p>直接看toString方法，toString方法的定义比较简单，就是把一个boolean类型转换成字符串类型。</p>
-<pre><code>public static String toString(boolean arg) {
-    return arg ? &quot;true&quot; : &quot;false&quot;;
-}
-</code></pre><p>compareTo方法:</p>
-<pre><code>public int compareTo(Boolean arg0) {
-    return compare(this.value, arg0.value);
-}
-
-public static int compare(boolean arg, boolean arg0) {
-    return arg == arg0 ? 0 : (arg ? 1 : -1);
-}
-</code></pre><p>代码实现比较简单，就是拿出其中的boolean类型的value进行比较。</p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/基本类型/" class="article-tag-list-link color5">基本类型</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Boolean/" class="article-tag-list-link color3">Boolean</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/01/12/Boolean/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-    <article id="post-Integer" class="article article-type-post  article-index" itemscope itemprop="blogPost">
-  <div class="article-inner">
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2017/01/11/Integer/">Integer</a>
-    </h1>
-  
-
-        
-        <a href="/2017/01/11/Integer/" class="archive-article-date">
-  	<time datetime="2017-01-11T04:29:34.000Z" itemprop="datePublished"><i class="icon-calendar icon"></i>2017-01-11</time>
-</a>
-        
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <p>Integer类是基本类型int的包装类。</p>
-<p>类定义:</p>
-<pre><code>public final class Integer extends Number implements Comparable&lt;Integer&gt;
-</code></pre><p>从类定义中我们可以知道以下几点：</p>
-<p>1、Integer类不能被继承</p>
-<p>2、Integer类实现了Comparable接口，所以可以用compareTo进行比较并且Integer对象只能和Integer类型的对象进行比较，不能和其他类型比较（至少调用compareTo方法无法比较）。</p>
-<p>3、Integer继承了Number类，所以该类可以调用longValue、floatValue、doubleValue等系列方法返回对应的类型的值。</p>
-<p>属性:</p>
-<p>私有属性:</p>
-<pre><code>private final int value;（value属性就是Integer对象中真正保存int值的）
-</code></pre><p>当我们使用new Integer(10)创建一个Integer对象的时候，就会用以下形式给value赋值</p>
-<pre><code>public Integer(int value)
- {
-  this.value = value;
- }
-</code></pre><p>从value的定义形式中可以看出value被定义成final类型。也就说明，一旦一个Integer对象被初始化之后，就无法再改变value的值。</p>
-<p>这里深入讨论一下以下代码的逻辑：</p>
-<pre><code>public class IntegerTest {
-public static void main(String[] args) {
-    Integer i = new Integer(10);
-    i = 5;
-}
-}
-</code></pre><p>在以上代码中，首先调用构造函数new一个Integer对象，给私有属性value赋值，这时value=10,接下来使用i=5的形式试图改变i的值。</p>
-<p>有一点开发经验的同学都知道，这个时候如果使用变量i，那么它的值一定是5，那么i=5这个赋值操作到底做了什么呢？到底是如何改变i的值的呢？是改变了原有对象i中value的值还是重新创建了一个新的Integer对象呢？</p>
-<p>其实上面的代码编译阶段编译器就会把i=5转成i = Integer.valueOf(5)[包装操作];这里先直接给出结论，i=5操作并没有改变使用Integer i = new Integer(10);创建出来的i中的value属性的值。要么是直接返回一个已有对象，要么新建一个对象。这里的具体实现细节在后面讲解valueOf方法的时候给出。<br>公共属性:</p>
-<pre><code>//值为 （－（2的31次方）） 的常量，它表示 int 类型能够表示的最小值。
-public static final int   MIN_VALUE = 0x80000000;
-//值为 （（2的31次方）－1） 的常量，它表示 int 类型能够表示的最大值。
-public static final int   MAX_VALUE = 0x7fffffff;   
-//表示基本类型 int 的 Class 实例。
-public static final Class&lt;Integer&gt;  TYPE = (Class&lt;Integer&gt;) Class.getPrimitiveClass(&quot;int&quot;);
-//用来以二进制补码形式表示 int 值的比特位数。
-public static final int SIZE = 32;
-</code></pre><p>方法:</p>
-<p>Integer提供了两个构造方法：</p>
-<pre><code>//构造一个新分配的 Integer 对象，它表示指定的 int 值。
-public Integer(int value) {
-this.value = value;
-}
-
-//构造一个新分配的 Integer 对象，它表示 String 参数所指示的 int 值。
-public Integer(String s) throws NumberFormatException {
-this.value = parseInt(s, 10);
-}
-</code></pre><p>Integer valueOf(int i)方法（effective java第一条准则）:</p>
-<pre><code>//valueOf方法源码
-public static Integer valueOf(int i) {
-if (i &gt;= IntegerCache.low &amp;&amp; i &lt;= IntegerCache.high)
-    return IntegerCache.cache[i + (-IntegerCache.low)];
-return new Integer(i);
-}
-</code></pre><p>我们看到了在valueOf方法中有一个if表达式，当i小于IntegerCache中high属性，大于IntegerCache中low属性时，返回IntegerCache中cache数组中与i相关的某个值，从名义上可以看出IntegerCache是Integer的缓存，那么IntegerCache又是怎样实现的呢？  </p>
-<pre><code>    private static class IntegerCache {
-    static final int low = -128;
-    static final int high;
-    static final Integer[] cache;
-
-    static {
-        int arg = 127;
-        String arg0 = VM
-                .getSavedProperty(&quot;java.lang.Integer.IntegerCache.high&quot;);
-        int arg1;
-        if (arg0 != null) {
-            arg1 = Integer.parseInt(arg0);
-            arg1 = Math.max(arg1, 127);
-            arg = Math.min(arg1, 2147483518);
-        }
-
-        high = arg;
-        cache = new Integer[high - -128 + 1];
-        arg1 = -128;
-
-        for (int arg2 = 0; arg2 &lt; cache.length; ++arg2) {
-            cache[arg2] = new Integer(arg1++);
-        }
-
-    }
-}
-</code></pre><p>以上是IntegerCache的源码，IntegerCache有三个属性：low=-128，high（通常=127），cache数组，一个静态代码块。IntegerCache的源码结构可知，当加载Integer类时，因为IntegerCache是静态内部类所以会被加载，同时会执行静态代码块，在静态代码块中给high赋值，同时创建cache数组并赋值，cache数组的长度为(high - low) + 1。</p>
-<p>所以valueOf方法的if表达式其实取的是IntegerCache中cache数组的值，这么做的好处就是当i在[low high]范围内，就不用重复创建对象，直接从cache中取。</p>
-<p>String转成Integer（int）的方法:</p>
-<pre><code>Integer getInteger(String nm)
-Integer getInteger(String nm, int val)
-Integer getInteger(String nm, Integer val)
-Integer decode(String nm)
-Integer valueOf(String s)
-Integer valueOf(String s, int radix)
-int parseUnsignedInt(String s)
-int parseUnsignedInt(String s, int radix)
-int parseInt(String s)
-int parseInt(String s, int radix)
-</code></pre><p>以上所有方法都能实现将String类型的值转成Integer(int)类型（如果 String 不包含可解析整数将抛出NumberFormatException）</p>
-<p>可以说，所有将String转成Integer的方法都是基于parseInt方法实现的。简单看一下以上部分方法的调用栈。</p>
-<pre><code>getInteger(String nm) ---&gt; getInteger(nm, null);---&gt;Integer.decode()---&gt;Integer.valueOf()---&gt;parseInt()
-</code></pre><p>getInteger:</p>
-<p>确定具有指定名称的系统属性的整数值。 第一个参数被视为系统属性的名称。通过 System.getProperty(java.lang.String) 方法可以访问系统属性。然后，将该属性的字符串值解释为一个整数值，并返回表示该值的 Integer 对象。使用 getProperty 的定义可以找到可能出现的数字格式的详细信息。其中参数nm应该在System的props中可以找到。</p>
-<p>decode:</p>
-<pre><code>public static Integer decode(String nm) throws NumberFormatException
-</code></pre><p>该方法的作用是将 String 解码为 Integer。接受十进制、十六进制和八进制数字。</p>
-<p>parseInt:</p>
-<pre><code>public static int parseInt(String s) throws NumberFormatException {
-return parseInt(s,10);
-}
-
-public static int parseInt(String s, int radix) throws NumberFormatException
-</code></pre><p>使用第二个参数指定的基数(如果没指定，则按照十进制处理），将字符串参数解析为有符号的整数。<br>如果发生以下任意一种情况，则抛出一个 NumberFormatException 类型的异常：</p>
-<p>   1.第一个参数为 null 或一个长度为零的字符串。</p>
-<p>   2.基数小于 Character.MIN_RADIX 或者大于 Character.MAX_RADIX。</p>
-<p>   3.假如字符串的长度超过 1，那么除了第一个字符可以是减号 ‘-‘ (‘u002D’) 外，字符串中存在任意不是由指定基数的数字表示的字符.</p>
-<p>   4.字符串表示的值不是 int 类型的值。</p>
-<p>总结:</p>
-<p>上面列举了很多能够将String转成Integer的方法。那么他们之间有哪些区别，又该如何选择呢？</p>
-<p>parseInt方法返回的是基本类型int</p>
-<p>其他的方法返回的是Integer</p>
-<p>valueOf（String）方法会调用valueOf(int)方法。</p>
-<p>如果只需要返回一个基本类型，而不需要一个对象，可以直接使用Integert.parseInt(“123”);</p>
-<p>如果需要一个对象，那么建议使用valueOf(),因为该方法可以借助缓存带来的好处。</p>
-<p>如果和进制有关，那么就是用decode方法。</p>
-<p>如果是从系统配置中取值，那么就是用getInteger</p>
-<p>int转成String的方法:<br>    String  toString()<br>    static String   toString(int i)<br>    static String   toString(int i, int radix)<br>    static String   toBinaryString(int i)<br>    static String   toHexString(int i)<br>    static String   toOctalString(int i)<br>    static String   toUnsignedString(int i)<br>    static String   toUnsignedString(int i, int radix)</p>
-<p>直接看toString方法，toString方法的定义比较简单，就是把一个int类型的数字转换成字符串类型，但是这个方法的实现调用了一系列方法。</p>
-<pre><code>public static String toString(int i) {
-if (i == Integer.MIN_VALUE) //下面代码要将负数转化为正数
-    return &quot;-2147483648&quot;;
-int size = (i &lt; 0) ? stringSize(-i) + 1 : stringSize(i);
-char[] buf = new char[size];
-getChars(i, size, buf);
-return new String(buf, true);
-}
-</code></pre><p>compareTo方法:</p>
-<p>Integer类实现了Comparable<integer>接口，所以Integer对象可以和另外一个Integer对象进行比较。</integer></p>
-<pre><code> public int compareTo(Integer anotherInteger) {
-return compare(this.value, anotherInteger.value);
-}
-
-public static int compare(int x, int y) {
-return (x &lt; y) ? -1 : ((x == y) ? 0 : 1);
-}
-</code></pre><p>代码实现比较简单，就是拿出其中的int类型的value进行比较。</p>
-<p>参考资料</p>
-<p><a href="http://www.hollischuang.com/archives/1058" target="_blank" rel="external">http://www.hollischuang.com/archives/1058</a></p>
-
-      
-
-      
-    </div>
-    <div class="article-info article-info-index">
-      
-      
-	<div class="article-tag tagcloud">
-		<i class="icon-price-tags icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="javascript:void(0)" class="js-tag article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-      
-	<div class="article-category tagcloud">
-		<i class="icon-book icon"></i>
-		<ul class="article-tag-list">
-			 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/日志/" class="article-tag-list-link color3">日志</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/JAVA基础/" class="article-tag-list-link color2">JAVA基础</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/基本类型/" class="article-tag-list-link color5">基本类型</a>
-        		</li>
-      		 
-        		<li class="article-tag-list-item">
-        			<a href="/categories/Integer/" class="article-tag-list-link color3">Integer</a>
-        		</li>
-      		
-		</ul>
-	</div>
-
-
-      
-        <p class="article-more-link">
-          <a class="article-more-a" href="/2017/01/11/Integer/">展开全文 >></a>
-        </p>
-      
-
-      
-      <div class="clearfix"></div>
-    </div>
-  </div>
-</article>
-
-
-
-
-
-
-
-
-  
-  
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/">&laquo; Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
-    </nav>
-  
 
 
           </div>
@@ -737,11 +256,11 @@ return (x &lt; y) ? -1 : ((x == y) ? 0 : 1);
     <script>
 	var yiliaConfig = {
 		mathjax: false,
-		isHome: true,
+		isHome: false,
 		isPost: false,
 		isArchive: false,
 		isTag: false,
-		isCategory: false,
+		isCategory: true,
 		open_in_new: true,
 		root: "/",
 		innerArchive: true,
